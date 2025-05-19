@@ -7,6 +7,10 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/folder/Inbox'
   },
   {
+    path: '/splash',
+    component: () => import ('../views/SplashScreen.vue')
+  },
+  {
     path: '/folder/:id',
     component: () => import ('../views/FolderPage.vue')
   }
