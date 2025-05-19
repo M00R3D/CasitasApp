@@ -1,3 +1,4 @@
+<!-- src/views/FolderPage.vue -->
 <template>
   <ion-page>
     <ion-header :translucent="true">
@@ -10,47 +11,100 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
+      <!-- Título grande para móviles -->
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">{{ $route.params.id }}</ion-title>
         </ion-toolbar>
       </ion-header>
 
-      <div id="container">
-        <strong class="capitalize">{{ $route.params.id }}</strong>
-        <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-      </div>
+      <div class="spacer"></div>
+
+      <!-- Galería de imágenes -->
+      <ion-grid class="gallery-grid">
+        <ion-row>
+          <ion-col size-md="8" size="12">
+            <ion-img
+              class="main-img"
+              src="https://i.ibb.co/9kYy8JcB/Whats-App-Image-2024-10-24-at-8-53-21-PM.jpg"
+              alt="Principal"
+            />
+          </ion-col>
+          <ion-col size-md="4" size="6">
+            <ion-img
+              class="thumb-img"
+              src="https://i.ibb.co/F4nP9p09/Whats-App-Image-2024-10-24-at-8-53-23-PM.jpg"
+            />
+          </ion-col>
+          <ion-col size-md="4" size="6">
+            <ion-img
+              class="thumb-img"
+              src="https://i.ibb.co/F4nP9p09/Whats-App-Image-2024-10-24-at-8-53-23-PM.jpg"
+            />
+          </ion-col>
+          <ion-col size-md="4" size="6">
+            <ion-img
+              class="thumb-img"
+              src="https://i.ibb.co/gbSzPjQm/Whats-App-Image-2024-10-24-at-8-53-25-PM.jpg"
+            />
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <div class="spacer"></div>
+
+      <!-- Componente adicional opcional -->
+      <!-- <DashboardComponent /> -->
+
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import {
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonImg,
+  IonMenuButton,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  IonGrid,
+  IonRow,
+  IonCol
+} from '@ionic/vue';
 </script>
 
 <style scoped>
-#container {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.spacer {
+  height: 2rem;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+/* Imagen principal grande */
+.main-img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  color: #8c8c8c;
-  margin: 0;
+/* Imágenes pequeñas tipo galería */
+.thumb-img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
 }
 
-#container a {
-  text-decoration: none;
+.thumb-img:hover {
+  transform: scale(1.03);
+}
+
+/* Alinear contenido */
+.gallery-grid {
+  padding: 1rem;
 }
 </style>
