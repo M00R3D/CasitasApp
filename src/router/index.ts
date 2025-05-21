@@ -10,12 +10,29 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/splash',
-    component: () => import ('../views/SplashScreen.vue')
+    component: () => import ('../views/Temas.vue')
   },
   {
     path: '/folder/:id',
     component: () => import ('../views/FolderPage.vue')
+  },
+  {
+  path: '/sobre-nosotros',
+  component: () => import('../views/SobreNosotros.vue')
+  },
+  {
+    path: '/como-llegar',
+    component: () => import('../views/ComoLlegar.vue')
+  },
+  {
+    path: '/temas',
+    component: () => import('../views/Temas.vue')
+  },
+  {
+    path: '/agendar-cita',
+    component: () => import('../views/AgendarCita.vue')
   }
+
 ]
 
 const router = createRouter({
