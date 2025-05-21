@@ -1,3 +1,4 @@
+<!--src\views\SplashScreen.vue  -->
 <template>
   <ion-page>
     <ion-content class="splash-container">

@@ -1,98 +1,85 @@
 <!-- src/App.vue -->
 <template>
   <ion-app>
-    <Navbar />
+    <!-- NAVBAR SUPERIOR -->
+    <ion-header>
+      <ion-toolbar class="custom-toolbar" >
+        <ion-buttons slot="start">
+          <ion-menu-button auto-hide="false"></ion-menu-button>
+        </ion-buttons>
 
-    <ion-split-pane content-id="main-content">
-      <ion-menu content-id="main-content" type="overlay">
-        <ion-content>
-          <!-- Aquí tu menú personalizado -->
-          <div :class="['menu', isOpen ? 'open d-flex flex-column d-md-flex' : 'd-none d-md-flex']" style="padding: 1rem;">
-            <ion-list>
-              <ion-item button @click="navigateTo('inicio')">Inicio</ion-item>
-              <ion-item button @click="navigateTo('sobre-nosotros')">Sobre Nosotros</ion-item>
-              <ion-item button @click="navigateTo('como-llegar')">¿Cómo llegar?</ion-item>
-              <ion-item button @click="navigateTo('temas')">Temas</ion-item>
-            </ion-list>
-            <div style="padding: 1rem;">
-              <ion-button expand="block" class="btn-agendar" @click="goToAgendarCita()">
-                Agendar Estancia
-              </ion-button>
-            </div>
-          </div>
-        </ion-content>
-      </ion-menu>
+        <ion-title class="ion-text-center ion-hide-md-down">Casitas El Salitral</ion-title>
+
+        <ion-buttons slot="end" class="ion-hide-sm-down">
+          <ion-button @click="goToAgendarCita">
+            Agendar Estancia
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <!-- sidebar -->
+    <ion-menu content-id="main-content" type="overlay">
+      <ion-content>
+        <ion-list>
+          <ion-item button @click="navigateTo('/')">Inicio</ion-item>
+          <ion-item button @click="navigateTo('/sobre-nosotros')">Sobre Nosotros</ion-item>
+          <ion-item button @click="navigateTo('/como-llegar')">¿Cómo llegar?</ion-item>
+          <ion-item button @click="navigateTo('/temas')">Temas</ion-item>
+        </ion-list>
 
 
-      <ion-router-outlet id="main-content"></ion-router-outlet>
-    </ion-split-pane>
+        <!--Agendar-->
+        <div class="ion-padding">
+          <ion-button expand="block" color="secondary" @click="goToAgendarCita">
+            Agendar Estancia
+          </ion-button>
+        </div>
+      </ion-content>
+    </ion-menu>
+  
+    <!-- MAIN -->
+    <ion-router-outlet id="main-content" />
   </ion-app>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
-import Navbar from './components/Navbar.vue';
-
 import {
   IonApp,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonTitle,
   IonContent,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonListHeader,
   IonMenu,
-  IonMenuToggle,
-  IonNote,
+  IonList,
+  IonItem,
+  IonButton,
   IonRouterOutlet,
-  IonSplitPane,
 } from '@ionic/vue';
 
-import {
-  archiveOutline,
-  archiveSharp,
-  bookmarkOutline,
-  bookmarkSharp,
-  heartOutline,
-  heartSharp,
-  mailOutline,
-  mailSharp,
-  paperPlaneOutline,
-  paperPlaneSharp,
-  trashOutline,
-  trashSharp,
-  warningOutline,
-  warningSharp,
-} from 'ionicons/icons';
+import { useRouter } from 'vue-router';
 
-const selectedIndex = ref(0);
+const router = useRouter();
 
-const appPages = [
-  { title: 'Inbox', url: '/folder/Inbox', iosIcon: mailOutline, mdIcon: mailSharp },
-  { title: 'Outbox', url: '/folder/Outbox', iosIcon: paperPlaneOutline, mdIcon: paperPlaneSharp },
-  { title: 'Favorites', url: '/folder/Favorites', iosIcon: heartOutline, mdIcon: heartSharp },
-  { title: 'Archived', url: '/folder/Archived', iosIcon: archiveOutline, mdIcon: archiveSharp },
-  { title: 'Trash', url: '/folder/Trash', iosIcon: trashOutline, mdIcon: trashSharp },
-  { title: 'Spam', url: '/folder/Spam', iosIcon: warningOutline, mdIcon: warningSharp },
-];
+function navigateTo(path: string) {
+  router.push(path);
+}
 
-const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-
-// Para detectar el path y marcar la página seleccionada
-const path = window.location.pathname.split('folder/')[1];
-if (path !== undefined) {
-  const index = appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());
-  if (index !== -1) {
-    selectedIndex.value = index;
-  }
+function goToAgendarCita() {
+  router.push('/agendar-cita');
 }
 </script>
 
 <style scoped>
-/* Opcional: estilos para marcar el item seleccionado */
-.selected {
-  background-color: var(--ion-color-primary);
-  color: white;
+/* Estilos opcionales para personalizar más adelante */
+ion-toolbar {
+  --background: #e0e0e0; /* azul primario de Ionic */
+  --color: white;
+}
+.custom-toolbar {
+  --background: #a8a8a8;
+  --color: white;
 }
 </style>

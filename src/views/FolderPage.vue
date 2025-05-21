@@ -1,19 +1,20 @@
 <!-- src/views/FolderPage.vue -->
 <template>
   <ion-page>
+    <!-- Header superior -->
     <ion-header :translucent="true">
-      <ion-toolbar>
+      <ion-toolbar color="primary">
         <ion-buttons slot="start">
-          <ion-menu-button color="primary"></ion-menu-button>
+          <ion-menu-button color="light" />
         </ion-buttons>
         <ion-title>{{ $route.params.id }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <!-- Título grande para móviles -->
+      <!-- Título grande en scroll (móviles) -->
       <ion-header collapse="condense">
-        <ion-toolbar>
+        <ion-toolbar color="primary">
           <ion-title size="large">{{ $route.params.id }}</ion-title>
         </ion-toolbar>
       </ion-header>
@@ -30,32 +31,13 @@
               alt="Principal"
             />
           </ion-col>
-          <ion-col size-md="4" size="6">
-            <ion-img
-              class="thumb-img"
-              src="https://i.ibb.co/F4nP9p09/Whats-App-Image-2024-10-24-at-8-53-23-PM.jpg"
-            />
-          </ion-col>
-          <ion-col size-md="4" size="6">
-            <ion-img
-              class="thumb-img"
-              src="https://i.ibb.co/F4nP9p09/Whats-App-Image-2024-10-24-at-8-53-23-PM.jpg"
-            />
-          </ion-col>
-          <ion-col size-md="4" size="6">
-            <ion-img
-              class="thumb-img"
-              src="https://i.ibb.co/gbSzPjQm/Whats-App-Image-2024-10-24-at-8-53-25-PM.jpg"
-            />
+          <ion-col size-md="4" size="6" v-for="(src, i) in thumbs" :key="i">
+            <ion-img class="thumb-img" :src="src" />
           </ion-col>
         </ion-row>
       </ion-grid>
 
       <div class="spacer"></div>
-
-      <!-- Componente adicional opcional -->
-      <!-- <DashboardComponent /> -->
-
     </ion-content>
   </ion-page>
 </template>
@@ -74,6 +56,12 @@ import {
   IonRow,
   IonCol
 } from '@ionic/vue';
+
+const thumbs = [
+  'https://i.ibb.co/F4nP9p09/Whats-App-Image-2024-10-24-at-8-53-23-PM.jpg',
+  'https://i.ibb.co/F4nP9p09/Whats-App-Image-2024-10-24-at-8-53-23-PM.jpg',
+  'https://i.ibb.co/gbSzPjQm/Whats-App-Image-2024-10-24-at-8-53-25-PM.jpg'
+];
 </script>
 
 <style scoped>
@@ -103,7 +91,6 @@ import {
   transform: scale(1.03);
 }
 
-/* Alinear contenido */
 .gallery-grid {
   padding: 1rem;
 }
