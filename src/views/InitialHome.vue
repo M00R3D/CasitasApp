@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
   IonButtons, IonButton, IonModal, IonIcon, IonItem,
@@ -92,6 +92,11 @@ const email = ref('')
 const password = ref('')
 const error = ref('')
 
+// Mostrar login automáticamente al cargar la página
+onMounted(() => {
+  showLogin.value = true
+})
+
 function cerrarLogin() {
   showLogin.value = false
 }
@@ -102,7 +107,7 @@ function handleLogin() {
     error.value = 'Por favor, completa todos los campos.'
     return
   }
-  if (email.value === 'admin@example.com' && password.value === '1234') {
+  if (email.value === 'job@mail.com' && password.value === '666') {
     alert('Inicio de sesión exitoso')
     cerrarLogin()
   } else {
@@ -110,6 +115,7 @@ function handleLogin() {
   }
 }
 </script>
+
 
 <style scoped>
 .rounded-img {
