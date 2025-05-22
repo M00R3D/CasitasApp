@@ -4,7 +4,7 @@
 
       <!-- Título principal -->
       <div class="text-center">
-        <h3><strong>CASITAS EL SALITRAL</strong></h3>
+        <h3><strong>Provisional</strong></h3>
         <h3><strong>CASITAS EL SALITRAL</strong></h3>
         <p class="text-muted">
           A las afueras de La Paz, Baja California Sur ·

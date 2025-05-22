@@ -22,7 +22,7 @@
     <ion-menu content-id="main-content" type="overlay">
       <ion-content>
         <ion-list>
-          <ion-item button @click="navigateTo('/')">Inicio</ion-item>
+          <ion-item button @click="navigateTo('/home')">Inicio</ion-item>
           <ion-item button @click="navigateTo('/sobre-nosotros')">Sobre Nosotros</ion-item>
           <ion-item button @click="navigateTo('/como-llegar')">¿Cómo llegar?</ion-item>
           <ion-item button @click="navigateTo('/temas')">Temas</ion-item>

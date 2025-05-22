@@ -6,15 +6,11 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '',
-    redirect: '/folder/Inbox'
+    redirect: '/home'
   },
   {
     path: '/splash',
     component: () => import ('../views/Temas.vue')
-  },
-  {
-    path: '/folder/:id',
-    component: () => import ('../views/FolderPage.vue')
   },
   {
   path: '/sobre-nosotros',
@@ -31,8 +27,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/agendar-cita',
     component: () => import('../views/AgendarCita.vue')
+  },
+  {
+    path: '/home',
+    component: () => import('../views/InitialHome.vue')
   }
-
 ]
 
 const router = createRouter({
