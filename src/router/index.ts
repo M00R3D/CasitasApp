@@ -13,6 +13,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import ('../views/Temas.vue')
   },
   {
+    path: '/detail',
+    component: () => import ('../views/DetalleCabana.vue')
+  },
+  {
   path: '/sobre-nosotros',
   component: () => import('../views/SobreNosotros.vue')
   },

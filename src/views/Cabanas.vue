@@ -42,7 +42,7 @@
                 <ion-card button @click="$router.push('/detail')" class="cabana-card">
                   <div class="img-container">
                     <ion-img :src="cabana.img" :alt="'Imagen de ' + cabana.nombre"></ion-img>
-                    <div class="overlay-text">Clic para reservar ya</div>
+                    <!-- <div class="overlay-text">Clic para reservar ya</div> -->
                   </div>
                   <ion-card-header>
                     <ion-card-title>{{ cabana.nombre }}</ion-card-title>
