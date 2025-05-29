@@ -24,7 +24,7 @@
       </div>
 
       <!-- Botón agendar -->
-      <button class="btn btn-agendar ms-md-3 mt-2 mt-md-0" @click="goToAgendarCita()">
+      <button class="btn btn-agendar ms-md-3 mt-2 mt-md-0" @click="goToDetalleCasita()">
         Agendar Estancia
       </button>
     </div>
@@ -40,11 +40,10 @@ function toggleMenu() {
   isOpen.value = !isOpen.value;
 }
 
-function goToAgendarCita() {
-  // Aquí puedes usar router.push('/agendar-cita') o emitir evento
-  // Por ejemplo:
-  // router.push('/agendar-cita');
-  alert('Función para agendar cita aquí');
+
+
+function goToDetalleCasita() {
+  router.push('/detail')
 }
 </script>
 

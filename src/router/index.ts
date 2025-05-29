@@ -30,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/agendar-cita',
-    component: () => import('../views/AgendarCita.vue')
+    component: () => import('../views/DetalleCabana.vue')
   },
   {
     path: '/home',
