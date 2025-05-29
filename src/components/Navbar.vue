@@ -18,8 +18,8 @@
       <!-- Menú -->
       <div :class="['menu', isOpen ? 'open d-flex flex-column d-md-flex' : 'd-none d-md-flex']">
         <a href="#">Inicio</a>
-        <a href="#">Sobre Nosotros</a>
-        <a href="#">¿Cómo llegar?</a>
+        <a href="/sobre-nosotros">Sobre Nosotros</a>
+        <a href="/como-llegar">¿Cómo llegar?</a>
         <a href="#">Temas</a>
       </div>
 
