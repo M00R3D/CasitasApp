@@ -1,5 +1,4 @@
 <template>
-  <ion-content>
     <ion-header>
       <ion-toolbar>
         <ion-title>Cabañas Disponibles</ion-title>
@@ -59,7 +58,6 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-  </ion-content>
 </template>
 
 <script setup>

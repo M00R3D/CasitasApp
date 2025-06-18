@@ -43,7 +43,7 @@
   </ion-app>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import {
   IonApp,
   IonHeader,
@@ -63,7 +63,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-function navigateTo(path: string) {
+function navigateTo(path) {
   router.push(path);
 }
 
@@ -71,6 +71,7 @@ function goToAgendarCita() {
   router.push('/agendar-cita');
 }
 </script>
+
 
 <style scoped>
 /* Estilos opcionales para personalizar más adelante */
