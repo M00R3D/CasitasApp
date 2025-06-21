@@ -2,22 +2,7 @@
 <template>
   <ion-app>
     <!-- NAVBAR SUPERIOR -->
-    <ion-header>
-      <ion-toolbar class="custom-toolbar" >
-        <ion-buttons slot="start">
-          <ion-menu-button auto-hide="false"></ion-menu-button>
-        </ion-buttons>
-
-        <ion-title class="ion-text-center ion-hide-md-down">Casitas El Salitral</ion-title>
-
-        <ion-buttons slot="end" class="ion-hide-sm-down">
-          <ion-button @click="goToAgendarCita">
-            Agendar Estancia
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
+    <Navbar />
     <!-- sidebar -->
     <ion-menu content-id="main-content" type="overlay">
       <ion-content>
@@ -58,7 +43,7 @@ import {
   IonButton,
   IonRouterOutlet,
 } from '@ionic/vue';
-
+import Navbar from './components/Navbar.vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

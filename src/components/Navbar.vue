@@ -1,144 +1,78 @@
 <template>
-  <nav class="navbar-wrapper border-bottom">
-    <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap py-2">
-      <!-- Logo -->
-      <div class="d-flex align-items-center gap-2 brand">
-        <a href="/home">
-          <img src="https://i.ibb.co/Tq7v2SD/path1584.png" alt="Logo" class="logo" />
-        </a>
-        <div class="logo-text">
-          Casitas El Salitral<br />
-          <small>Escápate a la naturaleza</small>
-        </div>
-      </div>
+  <ion-header>
+    <ion-toolbar class="custom-toolbar">
+      <!-- Menú + Logo juntos -->
+      <ion-buttons slot="start" class="start-group">
+        <!-- Botón hamburguesa -->
+        <ion-menu-button class="menu-icon d-md-none" />
 
-      <!-- Botón menú hamburguesa para móvil -->
-      <button class="menu-button d-md-none" @click="toggleMenu">☰</button>
+        <!-- Logo clickeable que lleva a /home -->
+        <router-link to="/home" class="logo-link">
+          <img
+            src="https://i.ibb.co/Tq7v2SD/path1584.png"
+            alt="Logo"
+            class="logo-img"
+          />
+        </router-link>
+      </ion-buttons>
 
-      <!-- Menú -->
-      <div :class="['menu', isOpen ? 'open d-flex flex-column d-md-flex' : 'd-none d-md-flex']">
-        <a href="#">Inicio</a>
-        <a href="/sobre-nosotros">Sobre Nosotros</a>
-        <a href="/como-llegar">¿Cómo llegar?</a>
-        <a href="#">Temas</a>
-      </div>
-
-      <!-- Botón agendar -->
-      <button class="btn btn-agendar ms-md-3 mt-2 mt-md-0" @click="goToDetalleCasita()">
-        Agendar Estancia
-      </button>
-    </div>
-  </nav>
+      <!-- Botón Agendar en desktop -->
+      <ion-buttons slot="end" class="d-none d-md-flex">
+        <ion-button color="tertiary" @click="goToDetalleCasita">
+          Agendar Estancia
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const isOpen = ref(false);
-
-function toggleMenu() {
-  isOpen.value = !isOpen.value;
-}
-
-
+const router = useRouter();
 
 function goToDetalleCasita() {
-  router.push('/detail')
+  router.push('/detail');
 }
 </script>
 
 <style scoped>
-@import 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css';
-
-.navbar-wrapper {
-  background-color: #ffffff;
-  width: 100%;
+.custom-toolbar {
+  --background: #ffffff;
+  --color: #333;
+  height: 64px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.container-fluid {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-.brand {
+.start-group {
   display: flex;
   align-items: center;
-  flex: 1 0 auto;
+  gap: 8px;
 }
 
-.logo {
-  width: 60px;
-  height: auto;
-  margin-right: 10px;
+.menu-icon {
+  font-size: 28px;
+  width: 44px;
+  height: 44px;
+  --color: #444;
 }
 
-.logo-text {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #333;
-  line-height: 1.2;
-}
-
-.menu-button {
-  display: none;
-  font-size: 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.menu {
+/* Logo como link */
+.logo-link {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
   align-items: center;
-}
-
-.menu a {
   text-decoration: none;
-  color: #444;
-  font-weight: 500;
 }
 
-.menu.open {
-  display: flex;
+.logo-img {
+  width: 48px;
+  height: auto;
+  padding: 2px;
 }
 
-.btn-agendar {
-  background-color: #f4a261;
-  color: white;
-  border: none;
-  padding: 10px 20px;
+/* Botón Agendar */
+ion-button {
   font-weight: bold;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-@media (max-width: 768px) {
-  .menu {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    background-color: #fff;
-    margin-top: 10px;
-  }
-
-  .menu.open {
-    display: flex;
-  }
-
-  .menu-button {
-    display: block;
-  }
-
-  .btn-agendar {
-    width: 100%;
-    margin-top: 10px;
-  }
+  padding: 0 16px;
 }
 </style>
