@@ -125,4 +125,16 @@ ion-img {
   font-size: 1.1rem;
   color: #ffc107;
 }
+ion-avatar {
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+ion-avatar ion-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 </style>
