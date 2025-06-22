@@ -2,10 +2,8 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 
-// Importa Ionic Vue
 import { IonicVue } from '@ionic/vue';
 
-// Importa estilos de Ionic (obligatorio)
 import '@ionic/vue/css/core.css';
 import '@ionic/vue/css/normalize.css';
 import '@ionic/vue/css/structure.css';
@@ -16,6 +14,14 @@ import '@ionic/vue/css/text-alignment.css';
 import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
+
+import { addIcons } from 'ionicons';
+import { star, starOutline } from 'ionicons/icons';
+
+addIcons({
+  'star': star,
+  'star-outline': starOutline
+});
 
 const app = createApp(App)
   .use(IonicVue)
