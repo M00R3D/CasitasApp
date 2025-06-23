@@ -85,11 +85,15 @@
           </ion-list>
         </ion-card-content>
       </ion-card>
+      <Footer />
     </ion-content>
   </ion-page>
+
 </template>
 
 <script setup>
+import Footer from '../components/Footer.vue'
+
 import {
   IonPage,
   IonHeader,

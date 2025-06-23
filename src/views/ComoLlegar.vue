@@ -26,12 +26,16 @@
           Usa Google Maps o Waze para una mejor experiencia. Si lo prefieres, contáctanos por WhatsApp y te asistimos paso a paso.
         </p>
       </section>
+      <Footer />
     </ion-content>
   </ion-page>
+
 </template>
 
 <script setup>
 import { IonPage, IonContent } from '@ionic/vue'
+import Footer from '../components/Footer.vue'
+
 </script>
 
 <style scoped>

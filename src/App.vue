@@ -45,6 +45,7 @@ import {
 } from '@ionic/vue';
 import Navbar from './components/Navbar.vue';
 import { useRouter } from 'vue-router';
+import Footer from './components/Footer.vue'
 
 const router = useRouter();
 

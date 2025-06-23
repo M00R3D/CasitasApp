@@ -67,11 +67,15 @@
         </ion-row>
       </ion-grid>
 
+      <Footer />
     </ion-content>
   </ion-page>
+
 </template>
 
 <script setup>
+import Footer from '../components/Footer.vue'
+
 import {
   IonPage,
   IonContent,

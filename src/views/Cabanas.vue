@@ -1,3 +1,4 @@
+<!-- src\views\Cabanas.vue -->
 <template>
     <ion-header>
       <ion-toolbar>
@@ -57,12 +58,15 @@
           </ion-grid>
         </ion-col>
       </ion-row>
+      <Footer />
     </ion-grid>
+    
 </template>
 
 <script setup>
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonGrid, IonRow, IonCol, IonText, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonImg, IonList, IonItem, IonAvatar, IonLabel, IonIcon } from '@ionic/vue'
 import { star, starOutline } from 'ionicons/icons'
+import Footer from '../components/Footer.vue'
 
 const cabanas = [
   { nombre: "Cabaña 1", descripcion: "Una cabaña con vistas espectaculares.", img: "https://i.ibb.co/9kYy8JcB/Whats-App-Image-2024-10-24-at-8-53-21-PM.jpg" },
