@@ -127,6 +127,7 @@ import {
 } from '@ionic/vue';
 import { close } from 'ionicons/icons';
 import { ref } from 'vue';
+import axios from 'axios';
 
 const emit = defineEmits(['cerrar']);
 
@@ -146,31 +147,52 @@ const registro = ref({
   foto: null
 });
 
-function handleLogin() {
-  // Lógica para iniciar sesión
-  console.log('Iniciar sesión con:', email.value, password.value);
-  // Aquí conectar con backend
+async function handleLogin() {
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/api/login', {
+      email: email.value,
+      password: password.value
+    });
+
+  console.log('Login exitoso:', response.data);
+    
+  error.value = '';
+  emit('cerrar'); // cerrar modal
+
+  } catch (err) {
+    console.error('Error al iniciar sesión:', err);
+    error.value = 'Correo o contraseña incorrectos';
+  }
+
 }
 
-function handleRegister() {
-  // Validación simple
+async function handleRegister() {
   if (registro.value.password !== registro.value.confirmarPassword) {
     alert('Las contraseñas no coinciden');
     return;
   }
 
-  // Aquí se enviaría a la API con FormData si se incluye la foto
   const formData = new FormData();
-  formData.append('nombre', registro.value.nombre);
+  formData.append('name', registro.value.nombre); // Laravel espera `name`
   formData.append('email', registro.value.email);
   formData.append('password', registro.value.password);
   if (registro.value.foto) {
     formData.append('foto', registro.value.foto);
   }
 
-  // Conectar con el backend
-  console.log('Registrando usuario:', formData);
-  mostrarRegistro.value = false;
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/api/register', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    console.log('Registro exitoso:', response.data);
+    mostrarRegistro.value = false;
+  } catch (err) {
+    console.error('Error al registrar:', err);
+    alert('Hubo un error al registrar el usuario.');
+  }
 }
 
 function handleFileUpload(event) {
