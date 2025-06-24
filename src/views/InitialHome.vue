@@ -44,7 +44,7 @@ import Cabanas from './Cabanas.vue'
 import Login from './Login.vue'
 import Banner from './Banner.vue'
 
-const showLogin = ref(false)
+const showLogin = ref(true)
 
 function cerrarLogin() {
   showLogin.value = false

@@ -1,10 +1,10 @@
 <template>
-  <IonModal :is-open="isOpen" @didDismiss="emit('cerrar')">
+  <IonModal :is-open="isOpen" @didDismiss="$emit('cerrar')">
     <IonHeader>
       <IonToolbar color="primary">
         <IonTitle>Iniciar Sesión</IonTitle>
         <IonButtons slot="end">
-          <IonButton @click="emit('cerrar')">
+          <IonButton @click="$emit('cerrar')">
             <IonIcon :icon="close" />
           </IonButton>
         </IonButtons>
