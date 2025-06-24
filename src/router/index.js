@@ -5,7 +5,9 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 const routes= [
   {
     path: '',
-    redirect: '/home'
+    redirect: '/home',
+    name: 'Home',
+
   },
   {
     path: '/splash',
@@ -19,6 +21,13 @@ const routes= [
     path: '/detail/:id',
     component: () => import('../views/DetalleCabana.vue')
   },
+  {
+  path: '/confirmacion-reserva/:id',
+  name: 'ConfirmacionReserva',
+  component: () => import('../views/ConfirmacionReserva.vue'),
+  props: true
+},
+
   {
   path: '/sobre-nosotros',
   component: () => import('../views/SobreNosotros.vue')

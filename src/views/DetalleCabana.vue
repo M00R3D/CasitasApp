@@ -145,10 +145,12 @@ import {
   IonIcon,
 } from '@ionic/vue'
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, onBeforeRouteLeave } from 'vue-router'
+import { useRoute, useRouter,onBeforeRouteLeave } from 'vue-router'
 import { cabanas } from '../data/cabanas.js'
 
 const route = useRoute()
+const router = useRouter()
+
 const cabana = ref(null)
 
 const fechaLlegada = ref(null)
@@ -219,7 +221,16 @@ function reservar() {
     alert('Por favor selecciona las fechas de llegada y salida.')
     return
   }
-  alert(`Reservando ${cabana.value.nombre} del ${fechaLlegada.value} al ${fechaSalida.value}`)
+
+  // Navegar a confirmacion-reserva pasando parámetros por query o params
+  router.push({
+    name: 'ConfirmacionReserva',
+    params: { id: cabana.value.id },
+    query: {
+      llegada: fechaLlegada.value,
+      salida: fechaSalida.value
+    }
+  })
 }
 
 onBeforeRouteLeave(() => {
