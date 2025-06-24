@@ -53,6 +53,16 @@
                 <ion-datetime id="salida" v-model="fechaSalida" :min="fechaLlegada || fechaMinima" presentation="date" />
               </ion-modal>
             </ion-item>
+
+            <ion-card v-if="cantidadNoches > 0" class="ion-margin-top">
+              <ion-card-header>
+                <ion-card-title>Resumen de Reserva</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p><strong>Noches:</strong> {{ cantidadNoches }}</p>
+                <p><strong>Total a pagar:</strong> ${{ totalCalculado.toFixed(2) }} MXN</p>
+              </ion-card-content>
+            </ion-card>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -118,9 +128,24 @@ import {
   IonCardTitle,
   IonIcon,
 } from '@ionic/vue'
-import { ref } from 'vue'
+import { ref , computed} from 'vue'
 import { star, starOutline } from 'ionicons/icons'
+const fechaLlegada = ref(null)
+const fechaSalida = ref(null)
+const fechaMinima = new Date().toISOString().split('T')[0]
 
+const cantidadNoches = computed(() => {
+  if (!fechaLlegada.value || !fechaSalida.value) return 0
+  const inicio = new Date(fechaLlegada.value)
+  const fin = new Date(fechaSalida.value)
+  const diffMs = fin - inicio
+  const diffDias = diffMs / (1000 * 60 * 60 * 24)
+  return diffDias > 0 ? diffDias : 0
+})
+
+const totalCalculado = computed(() => {
+  return cantidadNoches.value * cabana.value.precio
+})
 const cabana = ref({
   nombre: 'La Casita Color Menta',
   precio: 1795.99,
@@ -157,9 +182,10 @@ const comentarios = ref([
   },
 ])
 
-const fechaLlegada = ref('')
-const fechaSalida = ref('')
-const fechaMinima = new Date().toISOString().split('T')[0]
+// const fechaLlegada = ref(null)
+// const fechaSalida = ref(null)
+
+// const fechaMinima = new Date().toISOString().split('T')[0]
 
 function cambiarImagenPrincipal(img) {
   cabana.value.imagenPrincipal = img
@@ -218,4 +244,13 @@ function reservar() {
 .stars ion-icon {
   font-size: 1rem;
 }
+
+ion-card-content p {
+  font-size: 1.1rem;
+}
+
+ion-card-content strong {
+  color: var(--ion-color-primary);
+}
+
 </style>
