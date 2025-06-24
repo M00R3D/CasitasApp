@@ -160,7 +160,6 @@ const fechaMinima = new Date().toISOString().split('T')[0]
 function cargarCabana() {
   const id = parseInt(route.params.id)
 
-  // Validación extra: solo si es un número válido
   if (isNaN(id)) {
     cabana.value = null
     return
@@ -176,13 +175,6 @@ function cargarCabana() {
     fechaLlegada.value = null
     fechaSalida.value = null
   }
-
-    setTimeout(() => {
-    const llegada = document.getElementById('llegada')
-    const salida = document.getElementById('salida')
-    if (llegada) llegada.value = ''
-    if (salida) salida.value = ''
-  }, 100)
 }
 
 watch(

@@ -47,7 +47,12 @@ const routes= [
   {
     path: '/home',
     component: () => import('../views/InitialHome.vue')
-  }
+  },
+  {
+  path: '/notificaciones',
+  name: 'Notificaciones',
+  component: () => import('../views/Notificaciones.vue')
+}
 ]
 
 const router = createRouter({
