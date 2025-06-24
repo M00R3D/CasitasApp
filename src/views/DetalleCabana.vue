@@ -41,31 +41,31 @@
               <p class="ion-text-muted">Máx. {{ cabana.capacidadMaxima }} huéspedes</p>
               <ion-button expand="block" @click="reservar">Reservar</ion-button>
             </div>
+            
 
+            
             <ion-item>
               <ion-label>Llegada</ion-label>
               <ion-datetime-button datetime="llegada" />
-              <ion-modal keep-contents-mounted>
                 <ion-datetime
                   id="llegada"
                   v-model="fechaLlegada"
                   :min="fechaMinima"
                   presentation="date"
+                  :value="fechaLlegada || undefined"
                 />
-              </ion-modal>
             </ion-item>
 
             <ion-item>
               <ion-label>Salida</ion-label>
               <ion-datetime-button datetime="salida" />
-              <ion-modal keep-contents-mounted>
                 <ion-datetime
                   id="salida"
                   v-model="fechaSalida"
                   :min="fechaLlegada || fechaMinima"
                   presentation="date"
+                  :value="fechaSalida || undefined"
                 />
-              </ion-modal>
             </ion-item>
 
             <ion-card v-if="cantidadNoches > 0" class="ion-margin-top">
@@ -144,29 +144,52 @@ import {
   IonCardTitle,
   IonIcon,
 } from '@ionic/vue'
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { cabanas } from '../data/cabanas.js'
 
 const route = useRoute()
 const cabana = ref(null)
 
-onMounted(() => {
+const fechaLlegada = ref(null)
+const fechaSalida = ref(null)
+const fechaMinima = new Date().toISOString().split('T')[0]
+
+function cargarCabana() {
   const id = parseInt(route.params.id)
+
+  // Validación extra: solo si es un número válido
+  if (isNaN(id)) {
+    cabana.value = null
+    return
+  }
+
   cabana.value = cabanas.find(c => c.id === id)
 
   if (!cabana.value) {
     alert('Cabaña no encontrada')
   } else {
     cabana.value.imagenPrincipal = cabana.value.img
-    cabana.value.imagenesPequenas = [ cabana.value.img ]
+    cabana.value.imagenesPequenas = [cabana.value.img]
+    fechaLlegada.value = null
+    fechaSalida.value = null
   }
-})
 
+    setTimeout(() => {
+    const llegada = document.getElementById('llegada')
+    const salida = document.getElementById('salida')
+    if (llegada) llegada.value = ''
+    if (salida) salida.value = ''
+  }, 100)
+}
 
-const fechaLlegada = ref(null)
-const fechaSalida = ref(null)
-const fechaMinima = new Date().toISOString().split('T')[0]
+watch(
+  () => route.params.id,
+  () => {
+    cargarCabana()
+  },
+  { immediate: true } // Se ejecuta al montar y en cada cambio
+)
 
 const cantidadNoches = computed(() => {
   if (!fechaLlegada.value || !fechaSalida.value) return 0
@@ -180,7 +203,6 @@ const cantidadNoches = computed(() => {
 const totalCalculado = computed(() => {
   return cabana.value ? cantidadNoches.value * cabana.value.precioPorNoche : 0
 })
-
 
 function cambiarImagenPrincipal(img) {
   if (cabana.value) {
@@ -199,7 +221,14 @@ function reservar() {
   }
   alert(`Reservando ${cabana.value.nombre} del ${fechaLlegada.value} al ${fechaSalida.value}`)
 }
+
+onBeforeRouteLeave(() => {
+  cabana.value = null
+  fechaLlegada.value = null
+  fechaSalida.value = null
+})
 </script>
+
 
 <style scoped>
 .main-image-container {
