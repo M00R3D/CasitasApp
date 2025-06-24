@@ -11,9 +11,13 @@ const routes= [
     path: '/splash',
     component: () => import ('../views/Temas.vue')
   },
+  // {
+  //   path: '/detail',
+  //   component: () => import ('../views/DetalleCabana.vue')
+  // },
   {
-    path: '/detail',
-    component: () => import ('../views/DetalleCabana.vue')
+    path: '/detail/:id',
+    component: () => import('../views/DetalleCabana.vue')
   },
   {
   path: '/sobre-nosotros',

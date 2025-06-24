@@ -1,12 +1,14 @@
+<!-- src\views\DetalleCabana.vue -->
+
 <template>
   <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title>{{ cabana.nombre }}</ion-title>
+        <ion-title>{{ cabana?.nombre || 'Cargando...' }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true" class="ion-padding">
+    <ion-content :fullscreen="true" class="ion-padding" v-if="cabana">
       <!-- Grid principal -->
       <ion-grid>
         <ion-row>
@@ -32,9 +34,11 @@
           <!-- Columna de info -->
           <ion-col size-md="6" size="12">
             <div class="ion-margin-bottom">
-              <h1 class="price">${{ cabana.precio.toFixed(2) }}</h1>
+            <h1 class="price">
+              ${{ cabana?.precioPorNoche ? cabana.precioPorNoche.toFixed(2) : '0.00' }}
+            </h1>          
               <p class="ion-text-muted">precio por noche</p>
-              <p class="ion-text-muted">Máx. {{ cabana.maxHuespedes }} huéspedes</p>
+              <p class="ion-text-muted">Máx. {{ cabana.capacidadMaxima }} huéspedes</p>
               <ion-button expand="block" @click="reservar">Reservar</ion-button>
             </div>
 
@@ -42,7 +46,12 @@
               <ion-label>Llegada</ion-label>
               <ion-datetime-button datetime="llegada" />
               <ion-modal keep-contents-mounted>
-                <ion-datetime id="llegada" v-model="fechaLlegada" :min="fechaMinima" presentation="date" />
+                <ion-datetime
+                  id="llegada"
+                  v-model="fechaLlegada"
+                  :min="fechaMinima"
+                  presentation="date"
+                />
               </ion-modal>
             </ion-item>
 
@@ -50,7 +59,12 @@
               <ion-label>Salida</ion-label>
               <ion-datetime-button datetime="salida" />
               <ion-modal keep-contents-mounted>
-                <ion-datetime id="salida" v-model="fechaSalida" :min="fechaLlegada || fechaMinima" presentation="date" />
+                <ion-datetime
+                  id="salida"
+                  v-model="fechaSalida"
+                  :min="fechaLlegada || fechaMinima"
+                  presentation="date"
+                />
               </ion-modal>
             </ion-item>
 
@@ -74,7 +88,7 @@
         </ion-card-header>
         <ion-card-content>
           <ion-list>
-            <ion-item v-for="(comentario, i) in comentarios" :key="i">
+            <ion-item v-for="(comentario, i) in cabana.comentarios" :key="i">
               <ion-avatar slot="start">
                 <ion-img :src="comentario.foto" />
               </ion-avatar>
@@ -97,13 +111,15 @@
       </ion-card>
       <Footer />
     </ion-content>
-  </ion-page>
 
+    <ion-content v-else class="ion-padding">
+      <p>Cargando información...</p>
+    </ion-content>
+  </ion-page>
 </template>
 
 <script setup>
 import Footer from '../components/Footer.vue'
-
 import {
   IonPage,
   IonHeader,
@@ -128,8 +144,26 @@ import {
   IonCardTitle,
   IonIcon,
 } from '@ionic/vue'
-import { ref , computed} from 'vue'
-import { star, starOutline } from 'ionicons/icons'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { cabanas } from '../data/cabanas.js'
+
+const route = useRoute()
+const cabana = ref(null)
+
+onMounted(() => {
+  const id = parseInt(route.params.id)
+  cabana.value = cabanas.find(c => c.id === id)
+
+  if (!cabana.value) {
+    alert('Cabaña no encontrada')
+  } else {
+    cabana.value.imagenPrincipal = cabana.value.img
+    cabana.value.imagenesPequenas = [ cabana.value.img ]
+  }
+})
+
+
 const fechaLlegada = ref(null)
 const fechaSalida = ref(null)
 const fechaMinima = new Date().toISOString().split('T')[0]
@@ -144,51 +178,14 @@ const cantidadNoches = computed(() => {
 })
 
 const totalCalculado = computed(() => {
-  return cantidadNoches.value * cabana.value.precio
-})
-const cabana = ref({
-  nombre: 'La Casita Color Menta',
-  precio: 1795.99,
-  maxHuespedes: 2,
-  imagenPrincipal: 'https://i.ibb.co/9kYy8JcB/Whats-App-Image-2024-10-24-at-8-53-21-PM.jpg',
-  imagenesPequenas: [
-    'https://i.ibb.co/F4nP9p09/Whats-App-Image-2024-10-24-at-8-53-23-PM.jpg',
-    'https://i.ibb.co/9kYy8JcB/Whats-App-Image-2024-10-24-at-8-53-21-PM.jpg',
-    'https://i.ibb.co/F4nP9p09/Whats-App-Image-2024-10-24-at-8-53-23-PM.jpg',
-  ],
+  return cabana.value ? cantidadNoches.value * cabana.value.precioPorNoche : 0
 })
 
-const comentarios = ref([
-  {
-    nombre: 'Alexis',
-    estrellas: 5,
-    mensaje: 'Estancia de varias noches, lugar perfecto y tranquilo.',
-    foto: 'https://randomuser.me/api/portraits/men/32.jpg',
-    fecha: 'Hace 2 semanas',
-  },
-  {
-    nombre: 'Caleb',
-    estrellas: 4,
-    mensaje: 'Muy buena experiencia, recomendable.',
-    foto: 'https://randomuser.me/api/portraits/men/44.jpg',
-    fecha: 'Hace 3 semanas',
-  },
-  {
-    nombre: 'Sucharitha',
-    estrellas: 5,
-    mensaje: 'Perfecto para familias, espacio amplio y limpio.',
-    foto: 'https://randomuser.me/api/portraits/women/68.jpg',
-    fecha: 'Marzo 2025',
-  },
-])
-
-// const fechaLlegada = ref(null)
-// const fechaSalida = ref(null)
-
-// const fechaMinima = new Date().toISOString().split('T')[0]
 
 function cambiarImagenPrincipal(img) {
-  cabana.value.imagenPrincipal = img
+  if (cabana.value) {
+    cabana.value.imagenPrincipal = img
+  }
 }
 
 function verMasImagenes() {
@@ -196,6 +193,10 @@ function verMasImagenes() {
 }
 
 function reservar() {
+  if (!fechaLlegada.value || !fechaSalida.value) {
+    alert('Por favor selecciona las fechas de llegada y salida.')
+    return
+  }
   alert(`Reservando ${cabana.value.nombre} del ${fechaLlegada.value} al ${fechaSalida.value}`)
 }
 </script>
@@ -252,5 +253,4 @@ ion-card-content p {
 ion-card-content strong {
   color: var(--ion-color-primary);
 }
-
 </style>
