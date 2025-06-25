@@ -81,34 +81,57 @@
         </ion-row>
       </ion-grid>
 
-      <!-- Comentarios -->
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Comentarios</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-list>
-            <ion-item v-for="(comentario, i) in cabana.comentarios" :key="i">
-              <ion-avatar slot="start">
-                <ion-img :src="comentario.foto" />
-              </ion-avatar>
-              <ion-label>
-                <h2>{{ comentario.nombre }}</h2>
-                <div class="stars">
-                  <ion-icon
-                    v-for="n in 5"
-                    :key="n"
-                    :icon="n <= comentario.estrellas ? 'star' : 'star-outline'"
-                    color="warning"
-                  />
-                </div>
-                <p class="ion-text-muted">{{ comentario.fecha }}</p>
-                <p>{{ comentario.mensaje }}</p>
-              </ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-card-content>
-      </ion-card>
+      
+  <!-- Comentarios -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Comentarios</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item v-for="(comentario, i) in comentariosLocales" :key="i">
+          <ion-avatar slot="start">
+            <ion-img :src="comentario.foto || 'https://i.pravatar.cc/150?img=3'" />
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ comentario.nombre }}</h2>
+            <div class="stars">
+              <ion-icon
+                v-for="n in 5"
+                :key="n"
+                :icon="n <= comentario.estrellas ? 'star' : 'star-outline'"
+                color="warning"
+              />
+            </div>
+            <p class="ion-text-muted">{{ comentario.fecha }}</p>
+            <p>{{ comentario.mensaje }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!-- Formulario para nuevo comentario -->
+      <ion-item>
+        <ion-label position="floating">Nombre</ion-label>
+        <ion-input v-model="nuevoComentario.nombre" />
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Mensaje</ion-label>
+        <ion-textarea rows="3" v-model="nuevoComentario.mensaje" />
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Estrellas</ion-label>
+        <ion-select v-model="nuevoComentario.estrellas" interface="popover">
+          <ion-select-option v-for="n in 5" :key="n" :value="n">{{ n }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" @click="agregarComentario" :disabled="!puedeAgregarComentario">
+        Agregar Comentario
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
       <Footer />
     </ion-content>
 
@@ -143,9 +166,13 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonIcon,
+  IonInput,
+  IonTextarea,
+  IonSelect,
+  IonSelectOption,
 } from '@ionic/vue'
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter,onBeforeRouteLeave } from 'vue-router'
+import { ref, computed, watch } from 'vue'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { cabanas } from '../data/cabanas.js'
 
 const route = useRoute()
@@ -157,6 +184,18 @@ const fechaLlegada = ref(null)
 const fechaSalida = ref(null)
 const fechaMinima = new Date().toISOString().split('T')[0]
 
+// Nuevo: arreglo local para manejar comentarios
+const comentariosLocales = ref([])
+
+// Nuevo: objeto para nuevo comentario
+const nuevoComentario = ref({
+  nombre: '',
+  estrellas: 5,
+  mensaje: '',
+  fecha: '',
+  foto: '' // opcional, avatar por defecto vacío
+})
+
 function cargarCabana() {
   const id = parseInt(route.params.id)
 
@@ -165,15 +204,20 @@ function cargarCabana() {
     return
   }
 
-  cabana.value = cabanas.find(c => c.id === id)
+  const encontrada = cabanas.find(c => c.id === id)
 
-  if (!cabana.value) {
+  if (!encontrada) {
     alert('Cabaña no encontrada')
+    cabana.value = null
+    comentariosLocales.value = []
   } else {
+    cabana.value = { ...encontrada } // clonar para no mutar original
     cabana.value.imagenPrincipal = cabana.value.img
     cabana.value.imagenesPequenas = [cabana.value.img]
     fechaLlegada.value = null
     fechaSalida.value = null
+    // Inicializar comentarios locales
+    comentariosLocales.value = cabana.value.comentarios ? [...cabana.value.comentarios] : []
   }
 }
 
@@ -182,7 +226,7 @@ watch(
   () => {
     cargarCabana()
   },
-  { immediate: true } // Se ejecuta al montar y en cada cambio
+  { immediate: true }
 )
 
 const cantidadNoches = computed(() => {
@@ -214,7 +258,6 @@ function reservar() {
     return
   }
 
-  // Navegar a confirmacion-reserva pasando parámetros por query o params
   router.push({
     name: 'ConfirmacionReserva',
     params: { id: cabana.value.id },
@@ -225,12 +268,48 @@ function reservar() {
   })
 }
 
+// Computed para validar que se pueda agregar comentario
+const puedeAgregarComentario = computed(() =>
+  nuevoComentario.value.nombre.trim() !== '' &&
+  nuevoComentario.value.mensaje.trim() !== '' &&
+  nuevoComentario.value.estrellas >= 1 &&
+  nuevoComentario.value.estrellas <= 5
+)
+
+function agregarComentario() {
+  if (!puedeAgregarComentario.value) return
+
+  const fechaHoy = new Date().toLocaleDateString()
+
+  comentariosLocales.value.push({
+    nombre: nuevoComentario.value.nombre,
+    estrellas: nuevoComentario.value.estrellas,
+    mensaje: nuevoComentario.value.mensaje,
+    fecha: fechaHoy,
+    foto: '' // Puedes asignar URL de avatar si quieres
+  })
+
+  // Limpiar formulario
+  nuevoComentario.value.nombre = ''
+  nuevoComentario.value.estrellas = 5
+  nuevoComentario.value.mensaje = ''
+}
+
 onBeforeRouteLeave(() => {
   cabana.value = null
   fechaLlegada.value = null
   fechaSalida.value = null
+  comentariosLocales.value = []
+  nuevoComentario.value = {
+    nombre: '',
+    estrellas: 5,
+    mensaje: '',
+    fecha: '',
+    foto: ''
+  }
 })
 </script>
+
 
 
 <style scoped>
