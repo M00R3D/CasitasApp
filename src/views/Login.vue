@@ -173,7 +173,8 @@ async function handleRegister() {
   }
 
   const formData = new FormData();
-  formData.append('name', registro.value.nombre); // Laravel espera `name`
+  formData.append('first_name', registro.value.nombre); 
+  formData.append('last_name', '');
   formData.append('email', registro.value.email);
   formData.append('password', registro.value.password);
   if (registro.value.foto) {
