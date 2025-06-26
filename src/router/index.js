@@ -52,7 +52,13 @@ const routes= [
   path: '/notificaciones',
   name: 'Notificaciones',
   component: () => import('../views/Notificaciones.vue')
+  },
+    {
+    path: '/reservaciones',
+    name: 'Reservaciones',
+    component: () => import('../views/Reservaciones.vue')
 }
+
 ]
 
 const router = createRouter({

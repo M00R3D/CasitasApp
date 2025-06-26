@@ -1,8 +1,6 @@
-<!-- src/views/Dashboard.vue -->
+<!-- src\components\DashboardHome.vue -->
 <template>
   <div>
-    <IonButton expand="block" color="primary" @click="abrirModal()">Nueva Reservación</IonButton>
-
     <IonGrid class="ion-margin-top">
       <IonRow class="header-row">
         <IonCol>Estado</IonCol>
@@ -11,10 +9,9 @@
         <IonCol>Llegada</IonCol>
         <IonCol>Salida</IonCol>
         <IonCol>Detalle</IonCol>
-        <IonCol>Acciones</IonCol>
       </IonRow>
 
-      <IonRow v-for="(reserva, index) in reservaciones" :key="index">
+      <IonRow v-for="(reserva, index) in primerasTres" :key="index">
         <IonCol :class="estadoClase(reserva)">
           {{ calcularEstado(reserva.llegada, reserva.salida, reserva.cancelada) }}
         </IonCol>
@@ -27,55 +24,41 @@
             <IonIcon :icon="eyeOutline" />
           </IonButton>
         </IonCol>
-        <IonCol>
-          <IonButton fill="clear" size="small" color="warning" @click="abrirModal(reserva, index)">
-            Editar
-          </IonButton>
-          <IonButton fill="clear" size="small" color="danger" @click="eliminarReserva(index)">
-            Borrar
-          </IonButton>
-        </IonCol>
       </IonRow>
     </IonGrid>
 
-    <IonModal :is-open="mostrarModal" @didDismiss="cerrarModal">
-      <!-- Tu contenido del modal aquí -->
-    </IonModal>
+    <div class="ion-text-center ion-margin-top">
+      <IonButton fill="outline" size="small" color="primary" @click="verMas">
+        Ver Más
+      </IonButton>
+    </div>
   </div>
 </template>
 
-
 <script setup>
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
-  IonGrid, IonRow, IonCol, IonButton, IonIcon, IonModal,
-  IonItem, IonLabel, IonInput, IonDatetime, IonDatetimeButton,
-  IonToggle
+  IonGrid, IonRow, IonCol, IonButton, IonIcon
 } from '@ionic/vue'
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { eyeOutline } from 'ionicons/icons'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const reservaciones = ref([])
-const mostrarModal = ref(false)
-const editandoIndice = ref(null)
-
-const formulario = ref({
-  casita: '',
-  costo: 0,
-  llegada: '',
-  salida: '',
-  cancelada: false
-})
 
 function fetchReservaciones() {
   reservaciones.value = [
     { casita: 'Casita del Mar', costo: 3500, llegada: '2025-06-01', salida: '2025-06-03', cancelada: false },
     { casita: 'Nido Naranja', costo: 4200, llegada: '2025-05-10', salida: '2025-05-12', cancelada: false },
     { casita: 'Casa Sol', costo: 2800, llegada: '2025-04-15', salida: '2025-04-17', cancelada: true },
+    { casita: 'Casa Luna', costo: 3000, llegada: '2025-06-20', salida: '2025-06-22', cancelada: false }
   ]
 }
 
 onMounted(fetchReservaciones)
+
+const primerasTres = computed(() => reservaciones.value.slice(0, 3))
 
 function calcularEstado(llegada, salida, cancelada) {
   if (cancelada) return 'Cancelada'
@@ -105,40 +88,9 @@ function estadoClase(reserva) {
   return 'finalizada'
 }
 
-function abrirModal(reserva = null, index = null) {
-  if (reserva) {
-    formulario.value = { ...reserva }
-    editandoIndice.value = index
-  } else {
-    formulario.value = { casita: '', costo: 0, llegada: '', salida: '', cancelada: false }
-    editandoIndice.value = null
-  }
-  mostrarModal.value = true
+function verMas() {
+  router.push('/reservaciones')  // Cambia la ruta según cómo se llame tu vista completa de reservaciones
 }
-
-function cerrarModal() {
-  mostrarModal.value = false
-}
-
-function guardarReserva() {
-  if (!formulario.value.casita || !formulario.value.llegada || !formulario.value.salida) {
-    alert('Completa todos los campos obligatorios.')
-    return
-  }
-  if (editandoIndice.value !== null) {
-    reservaciones.value[editandoIndice.value] = { ...formulario.value }
-  } else {
-    reservaciones.value.push({ ...formulario.value })
-  }
-  cerrarModal()
-}
-
-function eliminarReserva(index) {
-  if (confirm('¿Seguro que deseas eliminar esta reservación?')) {
-    reservaciones.value.splice(index, 1)
-  }
-}
-
 </script>
 
 <style scoped>
@@ -166,5 +118,4 @@ ion-col {
   padding-top: 6px;
   padding-bottom: 6px;
 }
-
 </style>

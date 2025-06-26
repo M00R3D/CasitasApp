@@ -10,17 +10,15 @@
     </ion-header>
 
     <ion-content>
-      <div class="section">
-        <Dashboard />
-      </div>
-
-      <div class="section mt-4">
+      <section class="section mt-2">
+        <h2 class="section-title">Tus Reservaciones</h2>
+        <DashboardHome />
         <Banner
           imgSrc="https://i.ibb.co/9kYy8JcB/Whats-App-Image-2024-10-24-at-8-53-21-PM.jpg"
           titulo="Encuentra tu espacio de descanso ideal"
           subtitulo="Reserva tu casita favorita con un par de clics"
         />
-      </div>
+      </section>
 
       <div class="section mt-3">
         <Cabanas />
@@ -40,6 +38,7 @@ import {
 } from '@ionic/vue'
 
 import Dashboard from './Dashboard.vue'
+import DashboardHome from '@/components/DashboardHome.vue'
 import Cabanas from './Cabanas.vue'
 import Login from './Login.vue'
 import Banner from './Banner.vue'
@@ -52,27 +51,21 @@ function cerrarLogin() {
 </script>
 
 <style scoped>
-.mt-2 {
-  margin-top: 2rem;
-}
-
-.mt-3 {
-  margin-top: 3rem;
-}
-.mt-4 {
-  margin-top: 8rem;
-}
-
-.p-2 {
-  padding: 2rem;
-}
-
-.px-2 {
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
 .section {
   padding: 0 1rem;
 }
+
+.section-title {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.mt-2 {
+  margin-top: 2rem;
+}
+.mt-3 {
+  margin-top: 3rem;
+}
+
 </style>

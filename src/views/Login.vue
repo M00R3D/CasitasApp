@@ -96,7 +96,7 @@
             <IonInput type="password" v-model="registro.confirmarPassword" required />
           </IonItem>
 
-          <IonItem>
+          <!-- <IonItem>
             <IonLabel>Foto de perfil</IonLabel>
             <input
               type="file"
@@ -104,7 +104,7 @@
               capture="environment"
               @change="handleFileUpload"
             />
-          </IonItem>
+          </IonItem> -->
 
           <div class="ion-padding-top">
             <IonButton expand="block" type="submit">Registrarse</IonButton>
@@ -154,7 +154,7 @@ const registro = ref({
   email: '',
   password: '',
   confirmarPassword: '',
-  foto: null
+  // foto: null
 });
 
 async function handleLogin() {
@@ -184,9 +184,9 @@ async function handleRegister() {
   formData.append('telefono', registro.value.telefono);
   formData.append('email', registro.value.email);
   formData.append('password', registro.value.password);
-  if (registro.value.foto) {
-    formData.append('foto', registro.value.foto);
-  }
+  // if (registro.value.foto) {
+  //   formData.append('foto', registro.value.foto);
+  // }
 
   try {
     const response = await axios.post('http://127.0.0.1:8000/api/register', formData, {
@@ -201,12 +201,12 @@ async function handleRegister() {
   }
 }
 
-function handleFileUpload(event) {
-  const file = event.target.files[0];
-  if (file) {
-    registro.value.foto = file;
-  }
-}
+// function handleFileUpload(event) {
+//   const file = event.target.files[0];
+//   if (file) {
+//     registro.value.foto = file;
+//   }
+// }
 
 function abrirRecuperacion() {
   alert('Funcionalidad aún no implementada.');
