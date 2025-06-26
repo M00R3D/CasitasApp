@@ -2,6 +2,8 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
+
+
         <ion-title>Mi Perfil</ion-title>
         <ion-buttons slot="start">
           <ion-button @click="goBack">
@@ -12,6 +14,9 @@
     </ion-header>
 
     <ion-content class="ion-padding">
+        <ion-button @click="goBack">
+            <ion-icon :icon="arrowBack" />
+        </ion-button>
       <!-- Nombre -->
       <ion-item>
         <ion-label>Nombre: {{ perfil.nombre }}</ion-label>
@@ -77,7 +82,11 @@
         <ion-label>Foto de perfil</ion-label>
         <input type="file" accept="image/*" @change="handleFileUpload" />
       </ion-item>
-
+        <ion-buttons slot="start">
+        <ion-button @click="goBack">
+            <ion-icon :icon="arrowBack" />
+        </ion-button>
+        </ion-buttons>
       <!-- Botón Guardar general -->
       <div class="ion-padding-top">
         <ion-button expand="block" color="tertiary" @click="guardarCambios">
@@ -105,6 +114,7 @@ import {
 import { close } from 'ionicons/icons';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { arrowBack } from 'ionicons/icons';
 
 const router = useRouter();
 
@@ -160,3 +170,8 @@ onMounted(() => {
   cargarPerfil();
 });
 </script>
+<style>
+.btn-regreso {
+  margin-top: 72px; /* Ajusta el valor según cuánto lo quieras bajar */
+}
+</style>

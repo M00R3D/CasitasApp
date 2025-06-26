@@ -1,8 +1,13 @@
 <template>
+  
   <ion-page>
+    
     <ion-content class="ion-padding como-llegar-content">
       <section class="header-section">
         <p>------------------------------</p>
+        <ion-button class="flecha-regresar" @click="goBack">
+          <ion-icon :icon="arrowBack" />
+        </ion-button>
       </section>
       <section class="header-section">
         <h2>¿Cómo llegar a <span>Casitas El Salitral</span>?</h2>
@@ -33,9 +38,16 @@
 </template>
 
 <script setup>
-import { IonPage, IonContent } from '@ionic/vue'
-import Footer from '../components/Footer.vue'
+import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
+import Footer from '../components/Footer.vue';
+import { arrowBack } from 'ionicons/icons';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+
+function goBack() {
+  router.back();
+}
 </script>
 
 <style scoped>
@@ -47,7 +59,9 @@ import Footer from '../components/Footer.vue'
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #2c3e50;
 }
-
+.btn-regreso {
+  margin-top: 302px; /* Ajusta el valor según cuánto lo quieras bajar */
+}
 .header-section {
   text-align: center;
   margin-top: 1rem;

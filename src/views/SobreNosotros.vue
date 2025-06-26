@@ -1,10 +1,15 @@
+<!-- src\views\SobreNosotros.vue -->
 <template>
   <ion-page>
+    
     <ion-content class="ion-padding">
-
+        
       <!-- Título principal -->
       <div class="text-center">
         <h3><strong>Provisional</strong></h3>
+       <ion-button @click="goBack">
+            <ion-icon :icon="arrowBack" />
+        </ion-button>
         <h3><strong>CASITAS EL SALITRAL</strong></h3>
         <p class="text-muted">
           A las afueras de La Paz, Baja California Sur ·
@@ -86,8 +91,19 @@ import {
   IonAccordion,
   IonItem,
   IonLabel,
-  IonImg
+  IonImg,
+  IonButton,
+  IonIcon
 } from '@ionic/vue'
+
+import { arrowBack } from 'ionicons/icons'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+function goBack() {
+  router.back()
+}
 
 const faqs = [
   {
@@ -121,6 +137,7 @@ const faqs = [
 ]
 </script>
 
+
 <style scoped>
 .text-center {
   text-align: center;
@@ -132,4 +149,11 @@ const faqs = [
 .shadow-md {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 }
+.flecha-regresar {
+  position: fixed;
+  top: 20px;
+  left: 16px;
+  z-index: 9999;
+}
+
 </style>

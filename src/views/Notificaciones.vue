@@ -1,3 +1,4 @@
+<!-- src\views\Notificaciones.vue -->
 <template>
   <ion-page>
     <ion-header>
@@ -10,7 +11,9 @@
     </ion-header>
 
     <ion-content class="ion-padding">
-      
+      <ion-button class="flecha-regresar" @click="goBack">
+          <ion-icon :icon="arrowBack" />
+        </ion-button> 
       <h2>No leídas</h2>
       <ion-list>
         <ion-item
@@ -73,6 +76,8 @@
             Cerrar
           </ion-button>
         </ion-content>
+        
+
       </ion-modal>
 
     </ion-content>
@@ -91,6 +96,14 @@ import {
   checkmarkCircleOutline, warningOutline, notificationsOutline,
   timeOutline, eyeOutline, eyeOffOutline, chevronDownOutline
 } from 'ionicons/icons';
+import { useRouter } from 'vue-router'
+import { arrowBack } from 'ionicons/icons'
+
+const router = useRouter()
+
+function goBack() {
+  router.back()
+}
 
 // Simulación de notificaciones
 const notificaciones = ref([
@@ -116,16 +129,19 @@ function cerrar() {
 }
 
 function marcarComoLeida(id) {
+  if (!id) return; // Evitar que se llame sin id válido
   const noti = notificaciones.value.find(n => n.id === id);
   if (noti) noti.leida = true;
   cerrar();
 }
 
 function marcarComoNoLeida(id) {
+  if (!id) return; // Evitar que se llame sin id válido
   const noti = notificaciones.value.find(n => n.id === id);
   if (noti) noti.leida = false;
   cerrar();
 }
+
 
 function getIcon(tipo) {
   switch (tipo) {

@@ -2,15 +2,18 @@
 
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title>{{ cabana?.nombre || 'Cargando...' }}</ion-title>
-      </ion-toolbar>
+    <ion-header class="mt-2">
+      <p></p>
+        <ion-button @click="goBack">
+            <ion-icon :icon="arrowBack" />
+        </ion-button>
     </ion-header>
 
     <ion-content :fullscreen="true" class="ion-padding" v-if="cabana">
       <!-- Grid principal -->
       <ion-grid>
+        <ion-title>{{ cabana?.nombre || 'Cargando...' }}</ion-title>
+
         <ion-row>
           <!-- Columna de imágenes -->
           <ion-col size-md="6" size="12">
@@ -143,6 +146,9 @@
 
 <script setup>
 import Footer from '../components/Footer.vue'
+import { IonButtons, IonBackButton } from '@ionic/vue'
+import { arrowBack } from 'ionicons/icons'
+
 import {
   IonPage,
   IonHeader,
@@ -308,6 +314,10 @@ onBeforeRouteLeave(() => {
     foto: ''
   }
 })
+
+function goBack() {
+  router.back()
+}
 </script>
 
 
@@ -363,5 +373,8 @@ ion-card-content p {
 
 ion-card-content strong {
   color: var(--ion-color-primary);
+}
+.mt-2{
+  margin-top: 50px;
 }
 </style>
