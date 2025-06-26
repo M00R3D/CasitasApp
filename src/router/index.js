@@ -58,7 +58,12 @@ const routes= [
     name: 'Reservaciones',
     component: () => import('../views/Reservaciones.vue')
 }
-
+,
+    {
+    path: '/perfil',
+    name: 'Perfil',
+    component: () => import('../views/Perfil.vue')
+}
 ]
 
 const router = createRouter({

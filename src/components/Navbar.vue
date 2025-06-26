@@ -15,6 +15,11 @@
 
       <!-- Botones derecha -->
       <ion-buttons slot="end" class="button-group">
+        <!-- Botón Perfil -->
+        <ion-button @click="goToPerfil">
+          <ion-icon :icon="personCircleOutline" slot="icon-only" />
+        </ion-button>
+        
         <!-- Botón notificaciones -->
         <ion-button @click="presentPopover($event)">
           <ion-icon :icon="notificationsOutline" slot="icon-only" />
@@ -53,7 +58,7 @@
 </template>
 
 <script setup>
-import {
+import { 
   IonHeader,
   IonToolbar,
   IonButtons,
@@ -66,7 +71,7 @@ import {
   IonItem,
   IonLabel
 } from '@ionic/vue';
-import { notificationsOutline } from 'ionicons/icons';
+import { notificationsOutline, personCircleOutline } from 'ionicons/icons';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -94,6 +99,11 @@ function goToNotificaciones() {
   popoverOpen.value = false;
   router.push('/notificaciones');
 }
+
+function goToPerfil() {
+  router.push('/perfil'); // Ajusta la ruta según la que tengas para el perfil
+}
+
 </script>
 
 <style scoped>
