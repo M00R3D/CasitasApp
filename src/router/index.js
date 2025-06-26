@@ -64,6 +64,12 @@ const routes= [
     name: 'Perfil',
     component: () => import('../views/Perfil.vue')
 }
+,
+    {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('../views/AdminPanel.vue')
+}
 ]
 
 const router = createRouter({

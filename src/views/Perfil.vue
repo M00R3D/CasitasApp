@@ -2,8 +2,6 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
-
-
         <ion-title>Mi Perfil</ion-title>
         <ion-buttons slot="start">
           <ion-button @click="goBack">
@@ -14,15 +12,15 @@
     </ion-header>
 
     <ion-content class="ion-padding">
-        <ion-button @click="goBack">
-            <ion-icon :icon="arrowBack" />
-        </ion-button>
+      <!-- Botón regresar -->
+      <ion-button @click="goBack" class="btn-regreso">
+        <ion-icon :icon="arrowBack" />
+      </ion-button>
+
       <!-- Nombre -->
       <ion-item>
         <ion-label>Nombre: {{ perfil.nombre }}</ion-label>
-        <ion-button fill="clear" size="small" @click="editando.nombre = true">
-          Editar
-        </ion-button>
+        <ion-button fill="clear" size="small" @click="editando.nombre = true">Editar</ion-button>
       </ion-item>
       <ion-item v-if="editando.nombre">
         <ion-input v-model="perfil.nombre" placeholder="Nuevo nombre" />
@@ -32,9 +30,7 @@
       <!-- Apellido -->
       <ion-item>
         <ion-label>Apellido: {{ perfil.apellido }}</ion-label>
-        <ion-button fill="clear" size="small" @click="editando.apellido = true">
-          Editar
-        </ion-button>
+        <ion-button fill="clear" size="small" @click="editando.apellido = true">Editar</ion-button>
       </ion-item>
       <ion-item v-if="editando.apellido">
         <ion-input v-model="perfil.apellido" placeholder="Nuevo apellido" />
@@ -44,9 +40,7 @@
       <!-- Teléfono -->
       <ion-item>
         <ion-label>Teléfono: {{ perfil.telefono }}</ion-label>
-        <ion-button fill="clear" size="small" @click="editando.telefono = true">
-          Editar
-        </ion-button>
+        <ion-button fill="clear" size="small" @click="editando.telefono = true">Editar</ion-button>
       </ion-item>
       <ion-item v-if="editando.telefono">
         <ion-input v-model="perfil.telefono" placeholder="Nuevo teléfono" />
@@ -56,9 +50,7 @@
       <!-- Correo -->
       <ion-item>
         <ion-label>Email: {{ perfil.email }}</ion-label>
-        <ion-button fill="clear" size="small" @click="editando.email = true">
-          Editar
-        </ion-button>
+        <ion-button fill="clear" size="small" @click="editando.email = true">Editar</ion-button>
       </ion-item>
       <ion-item v-if="editando.email">
         <ion-input v-model="perfil.email" placeholder="Nuevo email" />
@@ -68,9 +60,7 @@
       <!-- Contraseña -->
       <ion-item>
         <ion-label>Contraseña: ********</ion-label>
-        <ion-button fill="clear" size="small" @click="editando.password = true">
-          Editar
-        </ion-button>
+        <ion-button fill="clear" size="small" @click="editando.password = true">Editar</ion-button>
       </ion-item>
       <ion-item v-if="editando.password">
         <ion-input type="password" v-model="perfil.password" placeholder="Nueva contraseña" />
@@ -82,12 +72,15 @@
         <ion-label>Foto de perfil</ion-label>
         <input type="file" accept="image/*" @change="handleFileUpload" />
       </ion-item>
-        <ion-buttons slot="start">
-        <ion-button @click="goBack">
-            <ion-icon :icon="arrowBack" />
+
+      <!-- Botón Panel Admin -->
+      <div class="ion-padding-top">
+        <ion-button expand="block" color="warning" @click="irAdmin">
+          Panel de Administración
         </ion-button>
-        </ion-buttons>
-      <!-- Botón Guardar general -->
+      </div>
+
+      <!-- Botón Guardar General -->
       <div class="ion-padding-top">
         <ion-button expand="block" color="tertiary" @click="guardarCambios">
           Guardar Todo
@@ -99,22 +92,12 @@
 
 <script setup>
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonContent,
-  IonItem,
-  IonLabel,
-  IonInput
+  IonPage, IonHeader, IonToolbar, IonTitle, IonButtons,
+  IonButton, IonIcon, IonContent, IonItem, IonLabel, IonInput
 } from '@ionic/vue';
-import { close } from 'ionicons/icons';
+import { close, arrowBack } from 'ionicons/icons';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { arrowBack } from 'ionicons/icons';
 
 const router = useRouter();
 
@@ -141,24 +124,22 @@ function goBack() {
 
 function handleFileUpload(event) {
   const file = event.target.files[0];
-  if (file) {
-    perfil.value.foto = file;
-  }
+  if (file) perfil.value.foto = file;
+}
+
+function irAdmin() {
+  router.push('/admin');
 }
 
 function cargarPerfil() {
-  // Simulación de datos que después vendrán de backend
+  // Simulación de datos
   const datosFake = {
     nombre: 'Juan',
     apellido: 'Pérez',
     telefono: '555-123-4567',
     email: 'juanperez@mail.com'
   };
-
-  perfil.value.nombre = datosFake.nombre;
-  perfil.value.apellido = datosFake.apellido;
-  perfil.value.telefono = datosFake.telefono;
-  perfil.value.email = datosFake.email;
+  perfil.value = { ...perfil.value, ...datosFake };
 }
 
 function guardarCambios() {
@@ -170,8 +151,9 @@ onMounted(() => {
   cargarPerfil();
 });
 </script>
-<style>
+
+<style scoped>
 .btn-regreso {
-  margin-top: 72px; /* Ajusta el valor según cuánto lo quieras bajar */
+  margin-bottom: 12px;
 }
 </style>
