@@ -135,8 +135,6 @@ import {
 import { close } from 'ionicons/icons';
 import { ref } from 'vue';
 import axios from 'axios';
-import storage from '@/utils/storage';
-
 
 const emit = defineEmits(['cerrar']);
 
@@ -165,15 +163,6 @@ async function handleLogin() {
       email: email.value,
       password: password.value
     });
-    const token = response.data.access_token;
-    const user = response.data.user;
-
-    await storage.set('token', token)
-    await storage.set('user', user)
-
-    // Opcional: establecer el header global
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    mostrarToken();
     console.log('Login exitoso:', response.data);
     error.value = '';
     emit('cerrar');
@@ -221,11 +210,5 @@ async function handleRegister() {
 
 function abrirRecuperacion() {
   alert('Funcionalidad aún no implementada.');
-}
-
-async function mostrarToken() {
-  const token = await storage.get('token');
-  console.log('Token guardado en storage:', token);
-  return token;
 }
 </script>
