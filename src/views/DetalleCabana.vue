@@ -179,7 +179,10 @@ import {
 } from '@ionic/vue'
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
+import axios from 'axios'
 import { cabanas } from '../data/cabanas.js'
+
+
 
 const route = useRoute()
 const router = useRouter()
@@ -202,28 +205,21 @@ const nuevoComentario = ref({
   foto: '' // opcional, avatar por defecto vacío
 })
 
-function cargarCabana() {
-  const id = parseInt(route.params.id)
+async function cargarCabana() {
+  const id = route.params.id
 
-  if (isNaN(id)) {
+  try {
+    const { data } = await axios.get(`http://127.0.0.1:8000/api/cabanas/${id}`)
+    cabana.value = {
+      ...data,
+      imagenPrincipal: data.imagenPrincipal,
+      imagenesPequenas: data.imagenesPequenas
+    }
+    comentariosLocales.value = data.comentarios
+  } catch (error) {
+    console.error('Error al cargar cabaña:', error)
+    alert('No se pudo cargar la cabaña.')
     cabana.value = null
-    return
-  }
-
-  const encontrada = cabanas.find(c => c.id === id)
-
-  if (!encontrada) {
-    alert('Cabaña no encontrada')
-    cabana.value = null
-    comentariosLocales.value = []
-  } else {
-    cabana.value = { ...encontrada } // clonar para no mutar original
-    cabana.value.imagenPrincipal = cabana.value.img
-    cabana.value.imagenesPequenas = [cabana.value.img]
-    fechaLlegada.value = null
-    fechaSalida.value = null
-    // Inicializar comentarios locales
-    comentariosLocales.value = cabana.value.comentarios ? [...cabana.value.comentarios] : []
   }
 }
 
