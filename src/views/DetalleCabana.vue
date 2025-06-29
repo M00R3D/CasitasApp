@@ -2,18 +2,15 @@
 
 <template>
   <ion-page>
-    <ion-header class="mt-2">
-      <p></p>
-        <ion-button @click="goBack">
-            <ion-icon :icon="arrowBack" />
-        </ion-button>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>{{ cabana?.nombre || 'Cargando...' }}</ion-title>
+      </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true" class="ion-padding" v-if="cabana">
       <!-- Grid principal -->
       <ion-grid>
-        <ion-title>{{ cabana?.nombre || 'Cargando...' }}</ion-title>
-
         <ion-row>
           <!-- Columna de imágenes -->
           <ion-col size-md="6" size="12">
@@ -84,57 +81,34 @@
         </ion-row>
       </ion-grid>
 
-      
-  <!-- Comentarios -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Comentarios</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item v-for="(comentario, i) in comentariosLocales" :key="i">
-          <ion-avatar slot="start">
-            <ion-img :src="comentario.foto || 'https://i.pravatar.cc/150?img=3'" />
-          </ion-avatar>
-          <ion-label>
-            <h2>{{ comentario.nombre }}</h2>
-            <div class="stars">
-              <ion-icon
-                v-for="n in 5"
-                :key="n"
-                :icon="n <= comentario.estrellas ? 'star' : 'star-outline'"
-                color="warning"
-              />
-            </div>
-            <p class="ion-text-muted">{{ comentario.fecha }}</p>
-            <p>{{ comentario.mensaje }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-
-      <!-- Formulario para nuevo comentario -->
-      <ion-item>
-        <ion-label position="floating">Nombre</ion-label>
-        <ion-input v-model="nuevoComentario.nombre" />
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">Mensaje</ion-label>
-        <ion-textarea rows="3" v-model="nuevoComentario.mensaje" />
-      </ion-item>
-
-      <ion-item>
-        <ion-label>Estrellas</ion-label>
-        <ion-select v-model="nuevoComentario.estrellas" interface="popover">
-          <ion-select-option v-for="n in 5" :key="n" :value="n">{{ n }}</ion-select-option>
-        </ion-select>
-      </ion-item>
-
-      <ion-button expand="block" @click="agregarComentario" :disabled="!puedeAgregarComentario">
-        Agregar Comentario
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+      <!-- Comentarios -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Comentarios</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item v-for="(comentario, i) in cabana.comentarios" :key="i">
+              <ion-avatar slot="start">
+                <ion-img :src="comentario.foto" />
+              </ion-avatar>
+              <ion-label>
+                <h2>{{ comentario.nombre }}</h2>
+                <div class="stars">
+                  <ion-icon
+                    v-for="n in 5"
+                    :key="n"
+                    :icon="n <= comentario.estrellas ? 'star' : 'star-outline'"
+                    color="warning"
+                  />
+                </div>
+                <p class="ion-text-muted">{{ comentario.fecha }}</p>
+                <p>{{ comentario.mensaje }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
       <Footer />
     </ion-content>
 
@@ -146,9 +120,6 @@
 
 <script setup>
 import Footer from '../components/Footer.vue'
-import { IonButtons, IonBackButton } from '@ionic/vue'
-import { arrowBack } from 'ionicons/icons'
-
 import {
   IonPage,
   IonHeader,
@@ -172,17 +143,10 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonIcon,
-  IonInput,
-  IonTextarea,
-  IonSelect,
-  IonSelectOption,
 } from '@ionic/vue'
-import { ref, computed, watch } from 'vue'
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
-import axios from 'axios'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter,onBeforeRouteLeave } from 'vue-router'
 import { cabanas } from '../data/cabanas.js'
-
-
 
 const route = useRoute()
 const router = useRouter()
@@ -193,34 +157,32 @@ const fechaLlegada = ref(null)
 const fechaSalida = ref(null)
 const fechaMinima = new Date().toISOString().split('T')[0]
 
-// Nuevo: arreglo local para manejar comentarios
-const comentariosLocales = ref([])
+function cargarCabana() {
+  const id = parseInt(route.params.id)
 
-// Nuevo: objeto para nuevo comentario
-const nuevoComentario = ref({
-  nombre: '',
-  estrellas: 5,
-  mensaje: '',
-  fecha: '',
-  foto: '' // opcional, avatar por defecto vacío
-})
-
-async function cargarCabana() {
-  const id = route.params.id
-
-  try {
-    const { data } = await axios.get(`http://127.0.0.1:8000/api/cabanas/${id}`)
-    cabana.value = {
-      ...data,
-      imagenPrincipal: data.imagenPrincipal,
-      imagenesPequenas: data.imagenesPequenas
-    }
-    comentariosLocales.value = data.comentarios
-  } catch (error) {
-    console.error('Error al cargar cabaña:', error)
-    alert('No se pudo cargar la cabaña.')
+  // Validación extra: solo si es un número válido
+  if (isNaN(id)) {
     cabana.value = null
+    return
   }
+
+  cabana.value = cabanas.find(c => c.id === id)
+
+  if (!cabana.value) {
+    alert('Cabaña no encontrada')
+  } else {
+    cabana.value.imagenPrincipal = cabana.value.img
+    cabana.value.imagenesPequenas = [cabana.value.img]
+    fechaLlegada.value = null
+    fechaSalida.value = null
+  }
+
+    setTimeout(() => {
+    const llegada = document.getElementById('llegada')
+    const salida = document.getElementById('salida')
+    if (llegada) llegada.value = ''
+    if (salida) salida.value = ''
+  }, 100)
 }
 
 watch(
@@ -228,7 +190,7 @@ watch(
   () => {
     cargarCabana()
   },
-  { immediate: true }
+  { immediate: true } // Se ejecuta al montar y en cada cambio
 )
 
 const cantidadNoches = computed(() => {
@@ -260,6 +222,7 @@ function reservar() {
     return
   }
 
+  // Navegar a confirmacion-reserva pasando parámetros por query o params
   router.push({
     name: 'ConfirmacionReserva',
     params: { id: cabana.value.id },
@@ -270,52 +233,12 @@ function reservar() {
   })
 }
 
-// Computed para validar que se pueda agregar comentario
-const puedeAgregarComentario = computed(() =>
-  nuevoComentario.value.nombre.trim() !== '' &&
-  nuevoComentario.value.mensaje.trim() !== '' &&
-  nuevoComentario.value.estrellas >= 1 &&
-  nuevoComentario.value.estrellas <= 5
-)
-
-function agregarComentario() {
-  if (!puedeAgregarComentario.value) return
-
-  const fechaHoy = new Date().toLocaleDateString()
-
-  comentariosLocales.value.push({
-    nombre: nuevoComentario.value.nombre,
-    estrellas: nuevoComentario.value.estrellas,
-    mensaje: nuevoComentario.value.mensaje,
-    fecha: fechaHoy,
-    foto: '' // Puedes asignar URL de avatar si quieres
-  })
-
-  // Limpiar formulario
-  nuevoComentario.value.nombre = ''
-  nuevoComentario.value.estrellas = 5
-  nuevoComentario.value.mensaje = ''
-}
-
 onBeforeRouteLeave(() => {
   cabana.value = null
   fechaLlegada.value = null
   fechaSalida.value = null
-  comentariosLocales.value = []
-  nuevoComentario.value = {
-    nombre: '',
-    estrellas: 5,
-    mensaje: '',
-    fecha: '',
-    foto: ''
-  }
 })
-
-function goBack() {
-  router.back()
-}
 </script>
-
 
 
 <style scoped>
@@ -369,8 +292,5 @@ ion-card-content p {
 
 ion-card-content strong {
   color: var(--ion-color-primary);
-}
-.mt-2{
-  margin-top: 50px;
 }
 </style>
