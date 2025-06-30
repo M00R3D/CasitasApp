@@ -54,6 +54,9 @@ import {
 } from '@ionic/vue'
 import { ref, onMounted } from 'vue'
 import { eyeOutline } from 'ionicons/icons'
+import axios from 'axios'
+
+
 
 const reservaciones = ref([])
 const mostrarModal = ref(false)
@@ -68,11 +71,20 @@ const formulario = ref({
 })
 
 function fetchReservaciones() {
-  reservaciones.value = [
-    { casita: 'Casita del Mar', costo: 3500, llegada: '2025-06-01', salida: '2025-06-03', cancelada: false },
-    { casita: 'Nido Naranja', costo: 4200, llegada: '2025-05-10', salida: '2025-05-12', cancelada: false },
-    { casita: 'Casa Sol', costo: 2800, llegada: '2025-04-15', salida: '2025-04-17', cancelada: true },
-  ]
+  axios.get('http://localhost:8000/api/reservations') // Cambia la URL según tu IP y puerto de backend
+    .then(response => {
+      // Mapea los datos para que se adapten al frontend
+      reservaciones.value = response.data.map(r => ({
+        casita: r.cabin_id,  // Aquí puedes luego reemplazar cabin_id por el nombre si haces join o consultas cabin aparte
+        costo: r.total,
+        llegada: r.start_date,
+        salida: r.end_date,
+        cancelada: r.status.toLowerCase() === 'cancelada' // Ajusta según tu backend, aquí se asume que status es texto
+      }))
+    })
+    .catch(error => {
+      console.error('Error al obtener reservaciones:', error)
+    })
 }
 
 onMounted(fetchReservaciones)

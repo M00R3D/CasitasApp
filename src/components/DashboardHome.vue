@@ -42,19 +42,26 @@ import {
 import { ref, computed, onMounted } from 'vue'
 import { eyeOutline } from 'ionicons/icons'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const router = useRouter()
 
 const reservaciones = ref([])
 
 function fetchReservaciones() {
-  reservaciones.value = [
-    { casita: 'Casita del Mar', costo: 3500, llegada: '2025-06-01', salida: '2025-06-03', cancelada: false },
-    { casita: 'Nido Naranja', costo: 4200, llegada: '2025-05-10', salida: '2025-05-12', cancelada: false },
-    { casita: 'Casa Sol', costo: 2800, llegada: '2025-04-15', salida: '2025-04-17', cancelada: true },
-    { casita: 'Casa Luna', costo: 3000, llegada: '2025-06-20', salida: '2025-06-22', cancelada: false }
-  ]
+  axios.get('http://localhost:8000/api/reservations')  // Ajusta al dominio o IP de tu backend
+    .then(response => {
+      reservaciones.value = response.data.map(r => ({
+        casita: r.cabin?.name || `ID ${r.cabin_id}`,
+        costo: r.total,
+        llegada: r.start_date,
+        salida: r.end_date,
+        cancelada: r.status.toLowerCase() === 'cancelada'
+      }))
+    })
+    .catch(error => console.error('Error al obtener reservaciones:', error))
 }
+
 
 onMounted(fetchReservaciones)
 
