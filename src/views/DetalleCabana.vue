@@ -7,10 +7,8 @@
     </ion-header>
 
     <ion-content :fullscreen="true" class="ion-padding" v-if="cabana">
-      <!-- Grid principal -->
       <ion-grid>
         <ion-row>
-          <!-- Columna de imágenes -->
           <ion-col size-md="6" size="12">
             <div class="main-image-container">
               <ion-img :src="cabana.imagenPrincipal" class="main-image" />
@@ -29,7 +27,6 @@
             </div>
           </ion-col>
 
-          <!-- Columna de info -->
           <ion-col size-md="6" size="12">
             <div class="ion-margin-bottom">
               <h1 class="price">
@@ -48,7 +45,6 @@
                 v-model="fechaLlegada"
                 :min="fechaMinima"
                 presentation="date"
-                :value="fechaLlegada || undefined"
               />
             </ion-item>
 
@@ -60,7 +56,6 @@
                 v-model="fechaSalida"
                 :min="fechaLlegada || fechaMinima"
                 presentation="date"
-                :value="fechaSalida || undefined"
               />
             </ion-item>
 
@@ -77,11 +72,11 @@
         </ion-row>
       </ion-grid>
 
-      <!-- Comentarios -->
       <ion-card>
         <ion-card-header>
           <ion-card-title>Comentarios</ion-card-title>
         </ion-card-header>
+
         <ion-card-content>
           <ion-list>
             <ion-item v-for="(comentario, i) in cabana.comentarios" :key="i">
@@ -103,8 +98,34 @@
               </ion-label>
             </ion-item>
           </ion-list>
+
+          <div v-if="usuario" class="ion-margin-top">
+            <h3>Deja tu comentario</h3>
+            <ion-item>
+              <ion-label>Estrellas</ion-label>
+              <ion-select v-model="estrellas" placeholder="Selecciona" interface="popover">
+                <ion-select-option v-for="n in 5" :key="n" :value="n">{{ n }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="floating">Comentario</ion-label>
+              <ion-textarea v-model="comentario" rows="3" />
+            </ion-item>
+
+            <ion-button expand="block" class="ion-margin-top" @click="enviarComentario">
+              Enviar
+            </ion-button>
+          </div>
+
+          <div v-else class="ion-margin-top">
+            <ion-text color="medium">
+              <p>Inicia sesión para dejar un comentario.</p>
+            </ion-text>
+          </div>
         </ion-card-content>
       </ion-card>
+
       <Footer />
     </ion-content>
 
@@ -115,6 +136,7 @@
 </template>
 
 <script setup>
+import { IonPage, IonContent, IonText } from '@ionic/vue'
 import axios from 'axios'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
@@ -124,14 +146,16 @@ const route = useRoute()
 const router = useRouter()
 
 const cabana = ref(null)
-
 const fechaLlegada = ref(null)
 const fechaSalida = ref(null)
 const fechaMinima = new Date().toISOString().split('T')[0]
 
+const comentario = ref('')
+const estrellas = ref(5)
+const usuario = ref(null)
+
 async function cargarCabana() {
   const id = parseInt(route.params.id)
-
   if (isNaN(id)) {
     cabana.value = null
     return
@@ -154,20 +178,11 @@ async function cargarCabana() {
         estrellas: com.rating,
         mensaje: com.comment,
         fecha: com.date,
-        foto: com.foto || 'https://i.ibb.co/PcgYQnv/avatar-default.png'
+        foto: com.foto || 'https://imgs.search.brave.com/mO74xjm7rDl7neRb8uhGoe5MdoTrVd0KwtUWxzb8x3U/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODgyMC8xODgy/MDE5OC5wbmc_c2Vt/dD1haXNfaHlicmlk'
       }))
     }
-
     fechaLlegada.value = null
     fechaSalida.value = null
-
-    setTimeout(() => {
-      const llegada = document.getElementById('llegada')
-      const salida = document.getElementById('salida')
-      if (llegada) llegada.value = ''
-      if (salida) salida.value = ''
-    }, 100)
-
   } catch (err) {
     console.error('Error al obtener cabaña', err)
     alert('Cabaña no encontrada o error de conexión')
@@ -175,13 +190,39 @@ async function cargarCabana() {
   }
 }
 
-watch(
-  () => route.params.id,
-  () => {
+async function obtenerUsuario() {
+  const token = localStorage.getItem('token')
+  if (!token) return
+  try {
+    const res = await axios.get('http://127.0.0.1:8000/api/user', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    usuario.value = res.data
+  } catch (err) {
+    usuario.value = null
+  }
+}
+
+async function enviarComentario() {
+  if (!comentario.value.trim()) {
+    alert('Escribe un comentario')
+    return
+  }
+  try {
+    await axios.post(`http://127.0.0.1:8000/api/cabins/${cabana.value.id}/comments`, {
+      comment: comentario.value,
+      rating: estrellas.value
+    }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    })
+    comentario.value = ''
+    estrellas.value = 5
     cargarCabana()
-  },
-  { immediate: true }
-)
+  } catch (err) {
+    console.error('Error al enviar comentario', err)
+    alert('Debes estar logueado y haber reservado para comentar')
+  }
+}
 
 const cantidadNoches = computed(() => {
   if (!fechaLlegada.value || !fechaSalida.value) return 0
@@ -197,9 +238,7 @@ const totalCalculado = computed(() => {
 })
 
 function cambiarImagenPrincipal(img) {
-  if (cabana.value) {
-    cabana.value.imagenPrincipal = img
-  }
+  if (cabana.value) cabana.value.imagenPrincipal = img
 }
 
 function verMasImagenes() {
@@ -211,17 +250,23 @@ function reservar() {
     alert('Por favor selecciona las fechas de llegada y salida.')
     return
   }
-
   router.push({
     name: 'ConfirmacionReserva',
     params: { id: cabana.value.id },
-    query: {
-      llegada: fechaLlegada.value,
-      salida: fechaSalida.value
-    }
+    query: { llegada: fechaLlegada.value, salida: fechaSalida.value }
   })
 }
 
+watch(() => route.params.id, () => cargarCabana(), { immediate: true })
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  }
+  
+  cargarCabana()
+  obtenerUsuario()
+})
 onBeforeRouteLeave(() => {
   cabana.value = null
   fechaLlegada.value = null
@@ -230,6 +275,41 @@ onBeforeRouteLeave(() => {
 </script>
 
 <style scoped>
+.main-image-container {
+  position: relative;
+}
+.main-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+}
+.miniatures {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+.mini-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+.mini-thumb:hover {
+  border-color: var(--ion-color-primary);
+}
+.price {
+  font-size: 2rem;
+  font-weight: bold;
+}
+.stars ion-icon {
+  font-size: 1.1rem;
+  color: #ffc107;
+}
+
 .main-image-container {
   position: relative;
 }

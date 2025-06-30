@@ -89,7 +89,7 @@ onMounted(async () => {
           estrellas: com.rating,
           mensaje: com.comment,
           fecha: com.date,
-          foto: com.foto || 'https://i.ibb.co/PcgYQnv/avatar-default.png',
+          foto: com.foto || 'https://imgs.search.brave.com/mO74xjm7rDl7neRb8uhGoe5MdoTrVd0KwtUWxzb8x3U/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZy/ZWVwaWsuY29tLzI1/Ni8xODgyMC8xODgy/MDE5OC5wbmc_c2Vt/dD1haXNfaHlicmlk',
           cabana: cabana.nombre
         }))
 
