@@ -4,7 +4,7 @@
       <ion-toolbar color="primary">
         <ion-title>Inicio</ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="showLogin = true">Iniciar Sesión</ion-button>
+          <ion-button @click="abrirLoginManual">Iniciar Sesión</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -25,47 +25,36 @@
       </div>
     </ion-content>
 
-
-    <Login :isOpen="showLogin" @cerrar="cerrarLogin" />
+    <Login :isOpen="showLogin" :mensaje="mensajeLogin" @cerrar="showLogin = false" />
   </ion-page>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue';
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
-  IonButtons, IonButton
-} from '@ionic/vue'
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton
+} from '@ionic/vue';
+import DashboardHome from '@/components/DashboardHome.vue';
+import Cabanas from './Cabanas.vue';
+import Login from './Login.vue';
+import Banner from './Banner.vue';
 
-import Dashboard from './Dashboard.vue'
-import DashboardHome from '@/components/DashboardHome.vue'
-import Cabanas from './Cabanas.vue'
-import Login from './Login.vue'
-import Banner from './Banner.vue'
+const showLogin = ref(false);
+const mensajeLogin = ref('');
 
-const showLogin = ref(true)
-
-function cerrarLogin() {
-  showLogin.value = false
+function abrirLoginManual() {
+  mensajeLogin.value = '';
+  showLogin.value = true;
 }
+
+onMounted(() => {
+  window.addEventListener('mostrar-login', (e) => {
+    mensajeLogin.value = e.detail?.mensaje || 'Inicia sesión o regístrate para continuar';
+    showLogin.value = true;
+  });
+});
+
+onUnmounted(() => {
+  window.removeEventListener('mostrar-login', () => {});
+});
 </script>
-
-<style scoped>
-.section {
-  padding: 0 1rem;
-}
-
-.section-title {
-  margin-bottom: 1rem;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-.mt-2 {
-  margin-top: 2rem;
-}
-.mt-3 {
-  margin-top: 3rem;
-}
-
-</style>

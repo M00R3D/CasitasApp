@@ -1,3 +1,4 @@
+<!-- src\views\Perfil.vue -->
 <template>
   <ion-page>
     <ion-header>
@@ -86,7 +87,13 @@
           Guardar Todo
         </ion-button>
       </div>
-    </ion-content>
+      
+    <div class="ion-padding-top">
+      <ion-button expand="block" color="danger" @click="cerrarSesion">
+        Cerrar Sesión
+      </ion-button>
+    </div>
+  </ion-content>
   </ion-page>
 </template>
 
@@ -109,6 +116,11 @@ const perfil = ref({
   password: '',
   foto: null
 });
+function cerrarSesion() {
+  localStorage.removeItem('token');
+  window.dispatchEvent(new Event('logout'));
+  router.push('/home');
+}
 
 const editando = ref({
   nombre: false,

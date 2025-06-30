@@ -1,3 +1,4 @@
+// src\services\auth.ts
 import axios from 'axios'
 
 // API base para Laravel (ajusta según IP de tu servidor si no usas localhost)
