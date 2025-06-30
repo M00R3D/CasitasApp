@@ -105,6 +105,7 @@ import {
 import { close, arrowBack } from 'ionicons/icons';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const router = useRouter();
 
@@ -118,6 +119,7 @@ const perfil = ref({
 });
 function cerrarSesion() {
   localStorage.removeItem('token');
+  localStorage.removeItem('user_id');
   window.dispatchEvent(new Event('logout'));
   router.push('/home');
 }
@@ -143,15 +145,33 @@ function irAdmin() {
   router.push('/admin');
 }
 
-function cargarPerfil() {
-  // Simulación de datos
-  const datosFake = {
-    nombre: 'Juan',
-    apellido: 'Pérez',
-    telefono: '555-123-4567',
-    email: 'juanperez@mail.com'
-  };
-  perfil.value = { ...perfil.value, ...datosFake };
+async function cargarPerfil() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('No has iniciado sesión');
+    router.push('/home');
+    return;
+  }
+
+  try {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    const response = await axios.get('http://127.0.0.1:8000/api/user');
+    
+    perfil.value = {
+      nombre: response.data.first_name || '',
+      apellido: response.data.last_name || '',
+      telefono: response.data.phone || '',
+      email: response.data.email || '',
+      password: '', // No se recomienda cargar contraseñas
+      foto: null
+    };
+
+  } catch (error) {
+    console.error('Error al cargar el perfil:', error);
+    alert('Hubo un problema al obtener tus datos. Reautentícate.');
+    router.push('/home');
+  }
 }
 
 function guardarCambios() {
