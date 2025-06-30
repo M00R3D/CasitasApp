@@ -142,7 +142,11 @@ async function handleLogin() {
     });
 
     const token = response.data.access_token;
+    const userId = response.data.user.user_id;
+
     localStorage.setItem('token', token);
+    localStorage.setItem('user_id', userId);
+
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
     error.value = '';
@@ -153,6 +157,7 @@ async function handleLogin() {
     error.value = 'Correo o contraseña incorrectos';
   }
 }
+
 
 async function handleRegister() {
   if (registro.value.password !== registro.value.confirmarPassword) {
