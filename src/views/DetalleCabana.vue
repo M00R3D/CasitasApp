@@ -1,5 +1,3 @@
-<!-- src\views\DetalleCabana.vue -->
-
 <template>
   <ion-page>
     <ion-header>
@@ -34,38 +32,36 @@
           <!-- Columna de info -->
           <ion-col size-md="6" size="12">
             <div class="ion-margin-bottom">
-            <h1 class="price">
-              ${{ cabana?.precioPorNoche ? cabana.precioPorNoche.toFixed(2) : '0.00' }}
-            </h1>          
+              <h1 class="price">
+                ${{ typeof cabana?.precioPorNoche === 'number' ? cabana.precioPorNoche.toFixed(2) : '0.00' }}
+              </h1>
               <p class="ion-text-muted">precio por noche</p>
-              <p class="ion-text-muted">Máx. {{ cabana.capacidadMaxima }} huéspedes</p>
+              <p class="ion-text-muted">Máx. {{ cabana.capacidadMaxima }}</p>
               <ion-button expand="block" @click="reservar">Reservar</ion-button>
             </div>
-            
 
-            
             <ion-item>
               <ion-label>Llegada</ion-label>
               <ion-datetime-button datetime="llegada" />
-                <ion-datetime
-                  id="llegada"
-                  v-model="fechaLlegada"
-                  :min="fechaMinima"
-                  presentation="date"
-                  :value="fechaLlegada || undefined"
-                />
+              <ion-datetime
+                id="llegada"
+                v-model="fechaLlegada"
+                :min="fechaMinima"
+                presentation="date"
+                :value="fechaLlegada || undefined"
+              />
             </ion-item>
 
             <ion-item>
               <ion-label>Salida</ion-label>
               <ion-datetime-button datetime="salida" />
-                <ion-datetime
-                  id="salida"
-                  v-model="fechaSalida"
-                  :min="fechaLlegada || fechaMinima"
-                  presentation="date"
-                  :value="fechaSalida || undefined"
-                />
+              <ion-datetime
+                id="salida"
+                v-model="fechaSalida"
+                :min="fechaLlegada || fechaMinima"
+                presentation="date"
+                :value="fechaSalida || undefined"
+              />
             </ion-item>
 
             <ion-card v-if="cantidadNoches > 0" class="ion-margin-top">
@@ -119,34 +115,10 @@
 </template>
 
 <script setup>
-import Footer from '../components/Footer.vue'
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonImg,
-  IonButton,
-  IonItem,
-  IonLabel,
-  IonDatetime,
-  IonDatetimeButton,
-  IonModal,
-  IonAvatar,
-  IonList,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonIcon,
-} from '@ionic/vue'
+import axios from 'axios'
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter,onBeforeRouteLeave } from 'vue-router'
-import { cabanas } from '../data/cabanas.js'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
+import Footer from '../components/Footer.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -157,32 +129,50 @@ const fechaLlegada = ref(null)
 const fechaSalida = ref(null)
 const fechaMinima = new Date().toISOString().split('T')[0]
 
-function cargarCabana() {
+async function cargarCabana() {
   const id = parseInt(route.params.id)
 
-  // Validación extra: solo si es un número válido
   if (isNaN(id)) {
     cabana.value = null
     return
   }
 
-  cabana.value = cabanas.find(c => c.id === id)
+  try {
+    const res = await axios.get(`http://127.0.0.1:8000/api/cabins/${id}`)
+    const data = res.data
 
-  if (!cabana.value) {
-    alert('Cabaña no encontrada')
-  } else {
-    cabana.value.imagenPrincipal = cabana.value.img
-    cabana.value.imagenesPequenas = [cabana.value.img]
+    cabana.value = {
+      id: data.id,
+      nombre: data.name,
+      descripcion: data.description,
+      precioPorNoche: Number(data.price_per_night) || 0,
+      capacidadMaxima: data.capacity,
+      imagenPrincipal: data.images?.[0] || 'https://i.ibb.co/sv7MR8xV/Whats-App-Image-2025-06-27-at-1-37-05-AM-2.jpg',
+      imagenesPequenas: data.images,
+      comentarios: (data.reviwes || []).map(com => ({
+        nombre: com.fisrt_name || 'Anónimo',
+        estrellas: com.rating,
+        mensaje: com.comment,
+        fecha: com.date,
+        foto: com.foto || 'https://i.ibb.co/PcgYQnv/avatar-default.png'
+      }))
+    }
+
     fechaLlegada.value = null
     fechaSalida.value = null
-  }
 
     setTimeout(() => {
-    const llegada = document.getElementById('llegada')
-    const salida = document.getElementById('salida')
-    if (llegada) llegada.value = ''
-    if (salida) salida.value = ''
-  }, 100)
+      const llegada = document.getElementById('llegada')
+      const salida = document.getElementById('salida')
+      if (llegada) llegada.value = ''
+      if (salida) salida.value = ''
+    }, 100)
+
+  } catch (err) {
+    console.error('Error al obtener cabaña', err)
+    alert('Cabaña no encontrada o error de conexión')
+    cabana.value = null
+  }
 }
 
 watch(
@@ -190,7 +180,7 @@ watch(
   () => {
     cargarCabana()
   },
-  { immediate: true } // Se ejecuta al montar y en cada cambio
+  { immediate: true }
 )
 
 const cantidadNoches = computed(() => {
@@ -222,7 +212,6 @@ function reservar() {
     return
   }
 
-  // Navegar a confirmacion-reserva pasando parámetros por query o params
   router.push({
     name: 'ConfirmacionReserva',
     params: { id: cabana.value.id },
@@ -240,57 +229,39 @@ onBeforeRouteLeave(() => {
 })
 </script>
 
-
 <style scoped>
 .main-image-container {
-  display: flex;
-  gap: 1rem;
-  flex-direction: column;
+  position: relative;
 }
-
 .main-image {
   width: 100%;
-  border-radius: 10px;
+  height: auto;
+  border-radius: 12px;
   object-fit: cover;
-  max-height: 300px;
 }
-
 .miniatures {
+  margin-top: 10px;
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  align-items: center;
+  gap: 10px;
 }
-
 .mini-thumb {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
   object-fit: cover;
   cursor: pointer;
   border: 2px solid transparent;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s;
 }
-
 .mini-thumb:hover {
   border-color: var(--ion-color-primary);
 }
-
 .price {
-  font-size: 2.5rem;
-  color: var(--ion-color-primary);
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: bold;
 }
-
 .stars ion-icon {
-  font-size: 1rem;
-}
-
-ion-card-content p {
   font-size: 1.1rem;
-}
-
-ion-card-content strong {
-  color: var(--ion-color-primary);
+  color: #ffc107;
 }
 </style>
