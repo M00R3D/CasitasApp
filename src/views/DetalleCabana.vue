@@ -174,7 +174,7 @@ async function cargarCabana() {
       id: data.id,
       nombre: data.name,
       descripcion: data.description,
-      precioPorNoche: Number(data.price_per_night) || 0,
+      precioPorNoche: Number(data.pricePerNight) || 0,
       capacidadMaxima: data.capacity,
       imagenPrincipal: data.images?.[0] || 'https://i.ibb.co/sv7MR8xV/Whats-App-Image-2025-06-27-at-1-37-05-AM-2.jpg',
       imagenesPequenas: data.images,
