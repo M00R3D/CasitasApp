@@ -136,7 +136,12 @@
 </template>
 
 <script setup>
-import { IonPage, IonContent, IonText } from '@ionic/vue'
+import { 
+  IonPage, IonContent, IonText, IonTextarea, IonSelect, IonSelectOption,
+  IonItem, IonLabel, IonDatetime, IonDatetimeButton, IonButton, IonImg,
+  IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonCardHeader, IonCardTitle,
+  IonList, IonAvatar, IonIcon, IonToolbar, IonTitle, IonHeader
+} from '@ionic/vue'
 import axios from 'axios'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
@@ -205,24 +210,30 @@ async function obtenerUsuario() {
 
 async function enviarComentario() {
   if (!comentario.value.trim()) {
-    alert('Escribe un comentario')
-    return
+    alert('Escribe un comentario');
+    return;
   }
+  
   try {
-    await axios.post(`http://127.0.0.1:8000/api/cabins/${cabana.value.id}/comments`, {
-      comment: comentario.value,
-      rating: estrellas.value
+    await axios.post('http://127.0.0.1:8000/api/reviews', {
+      user_id: usuario.value.user_id,      // ID del usuario autenticado
+      cabin_id: cabana.value.id,      // ID de la cabaña
+      rating: estrellas.value,        // Estrellas del comentario
+      comment: comentario.value,      // Texto del comentario
+      status: 'published'              // Ajusta el status según tu lógica (aprobado, pendiente, etc.)
     }, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    })
-    comentario.value = ''
-    estrellas.value = 5
-    cargarCabana()
+    });
+
+    comentario.value = '';
+    estrellas.value = 5;
+    cargarCabana();  // Refresca comentarios
   } catch (err) {
-    console.error('Error al enviar comentario', err)
-    alert('Debes estar logueado y haber reservado para comentar')
+    console.error('Error al enviar comentario', err);
+    alert(JSON.stringify(err.response.data.errors));
   }
 }
+
 
 const cantidadNoches = computed(() => {
   if (!fechaLlegada.value || !fechaSalida.value) return 0
